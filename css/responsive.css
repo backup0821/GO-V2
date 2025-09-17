@@ -1,0 +1,747 @@
+/* 無障礙廁所GO V2 - 響應式樣式 */
+
+/* 超大螢幕 (1400px 以上) */
+@media (min-width: 1400px) {
+    .container {
+        max-width: 1320px;
+    }
+    
+    .hero-title {
+        font-size: 3.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* 大螢幕 (1200px 以上) */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 1140px;
+    }
+    
+    .nav-container {
+        max-width: 1140px;
+    }
+    
+    .toilets-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+/* 中等螢幕 (992px 以上) */
+@media (min-width: 992px) {
+    .container {
+        max-width: 960px;
+    }
+    
+    .nav-container {
+        max-width: 960px;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .toilets-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .filters {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    .footer-content {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    
+    /* 桌面版導航 */
+    .nav-menu {
+        display: flex;
+    }
+    
+    .nav-toggle {
+        display: none;
+    }
+}
+
+/* 小螢幕 (768px 以上) */
+@media (min-width: 768px) {
+    .container {
+        max-width: 720px;
+    }
+    
+    .nav-container {
+        max-width: 720px;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .toilets-list {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .filters {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .modal-content {
+        width: 80%;
+    }
+    
+    /* 平板版導航 */
+    .nav-menu {
+        display: flex;
+    }
+    
+    .nav-toggle {
+        display: none;
+    }
+}
+
+/* 手機螢幕 (576px 以上) */
+@media (min-width: 576px) {
+    .container {
+        max-width: 540px;
+    }
+    
+    .nav-container {
+        max-width: 540px;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .toilets-list {
+        grid-template-columns: 1fr;
+    }
+    
+    .filters {
+        grid-template-columns: 1fr;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+    }
+    
+    .modal-content {
+        width: 90%;
+    }
+    
+    /* 手機版導航 */
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--surface-color);
+        box-shadow: var(--shadow-md);
+        flex-direction: column;
+        padding: var(--spacing-md);
+        border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-actions {
+        display: none;
+    }
+}
+
+/* 超小螢幕 (576px 以下) */
+@media (max-width: 575px) {
+    :root {
+        --spacing-xs: 2px;
+        --spacing-sm: 4px;
+        --spacing-md: 8px;
+        --spacing-lg: 12px;
+        --spacing-xl: 16px;
+        --spacing-xxl: 24px;
+    }
+    
+    .container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .nav-container {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .hero-section {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-sm);
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .search-container {
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .search-input {
+        padding: var(--spacing-md);
+        font-size: 1rem;
+    }
+    
+    .search-btn {
+        padding: var(--spacing-md);
+    }
+    
+    .quick-actions {
+        flex-direction: column;
+        align-items: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+        padding: var(--spacing-md) var(--spacing-lg);
+    }
+    
+    .stats-section,
+    .features-section {
+        padding: var(--spacing-xl) 0;
+    }
+    
+    .stats-grid,
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .stat-card,
+    .feature-card {
+        padding: var(--spacing-lg);
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+    
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.5rem;
+    }
+    
+    .search-filters,
+    .search-results {
+        padding: var(--spacing-lg);
+    }
+    
+    .filters {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .toilets-list {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .toilet-card {
+        padding: var(--spacing-md);
+    }
+    
+    .toilet-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .toilet-tags {
+        gap: var(--spacing-xs);
+    }
+    
+    .tag {
+        font-size: 0.75rem;
+        padding: 2px var(--spacing-xs);
+    }
+    
+    .toilet-info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+    }
+    
+    .accessibility-settings {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .settings-group {
+        padding: var(--spacing-lg);
+    }
+    
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-md) 0;
+    }
+    
+    .slider-range {
+        width: 100%;
+        margin: 0;
+    }
+    
+    .about-content {
+        padding: 0 var(--spacing-sm);
+    }
+    
+    .about-intro,
+    .about-features,
+    .about-contact {
+        padding: var(--spacing-lg);
+    }
+    
+    .feature-item {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .contact-info {
+        gap: var(--spacing-sm);
+    }
+    
+    .footer {
+        padding: var(--spacing-xl) 0 var(--spacing-lg);
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-lg);
+        text-align: center;
+    }
+    
+    .modal-content {
+        width: 95%;
+        margin: var(--spacing-sm);
+    }
+    
+    .modal-header,
+    .modal-body {
+        padding: var(--spacing-md);
+    }
+    
+    .accessibility-float-btn {
+        bottom: var(--spacing-md);
+        right: var(--spacing-md);
+        width: 48px;
+        height: 48px;
+    }
+    
+    /* 手機版導航 */
+    .navbar {
+        padding: var(--spacing-sm) 0;
+    }
+    
+    .nav-brand .brand-title {
+        font-size: 1.2rem;
+    }
+    
+    .nav-menu {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background-color: var(--surface-color);
+        box-shadow: var(--shadow-md);
+        flex-direction: column;
+        padding: var(--spacing-md);
+        border-radius: 0 0 var(--border-radius-md) var(--border-radius-md);
+    }
+    
+    .nav-menu.active {
+        display: flex;
+    }
+    
+    .nav-item {
+        width: 100%;
+    }
+    
+    .nav-link {
+        display: block;
+        width: 100%;
+        padding: var(--spacing-md);
+        text-align: center;
+        border-radius: var(--border-radius-md);
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .nav-toggle {
+        display: flex;
+    }
+    
+    .nav-actions {
+        display: none;
+    }
+}
+
+/* 橫向手機 (高度小於 500px) */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .hero-title {
+        font-size: 1.5rem;
+        margin-bottom: var(--spacing-xs);
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .search-container {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .quick-actions {
+        flex-direction: row;
+        gap: var(--spacing-sm);
+    }
+    
+    .btn {
+        width: auto;
+        max-width: none;
+    }
+    
+    .stats-section,
+    .features-section {
+        padding: var(--spacing-lg) 0;
+    }
+    
+    .modal-content {
+        max-height: 90vh;
+    }
+}
+
+/* 觸控裝置優化 */
+@media (hover: none) and (pointer: coarse) {
+    /* 增大觸控目標 */
+    .btn,
+    button,
+    .nav-link,
+    .toilet-card,
+    .feature-card,
+    .stat-card {
+        min-height: 48px;
+        min-width: 48px;
+    }
+    
+    .nav-link {
+        padding: var(--spacing-lg) var(--spacing-xl);
+    }
+    
+    /* 移除 hover 效果 */
+    .card:hover,
+    .toilet-card:hover,
+    .feature-card:hover,
+    .stat-card:hover,
+    .btn:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+    }
+    
+    /* 觸控友善的間距 */
+    .toilets-list,
+    .features-grid,
+    .stats-grid {
+        gap: var(--spacing-lg);
+    }
+    
+    /* 觸控友善的輸入框 */
+    input,
+    select,
+    textarea {
+        min-height: 48px;
+        font-size: 16px; /* 防止 iOS 縮放 */
+    }
+}
+
+/* 列印樣式 */
+@media print {
+    * {
+        background: transparent !important;
+        color: black !important;
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+    
+    .header,
+    .footer,
+    .nav-toggle,
+    .accessibility-float-btn,
+    .btn,
+    button {
+        display: none !important;
+    }
+    
+    .main-content {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .page-section {
+        display: block !important;
+        page-break-inside: avoid;
+    }
+    
+    .hero-section {
+        background: none !important;
+        color: black !important;
+        padding: var(--spacing-lg) 0 !important;
+    }
+    
+    .hero-title,
+    .hero-subtitle {
+        color: black !important;
+    }
+    
+    .card,
+    .toilet-card,
+    .feature-card,
+    .stat-card {
+        border: 1px solid #ccc !important;
+        page-break-inside: avoid;
+    }
+    
+    a {
+        text-decoration: underline !important;
+    }
+    
+    a[href^="http"]:after {
+        content: " (" attr(href) ")";
+        font-size: 0.8em;
+        color: #666;
+    }
+    
+    .container {
+        max-width: none !important;
+        padding: 0 !important;
+    }
+    
+    h1, h2, h3, h4, h5, h6 {
+        page-break-after: avoid;
+    }
+    
+    .page-break {
+        page-break-before: always;
+    }
+}
+
+/* 高解析度螢幕 */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    /* 優化高解析度螢幕的顯示 */
+    .feature-icon,
+    .stat-icon {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+}
+
+/* 減少動畫偏好 */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .fa-spin {
+        animation: none !important;
+    }
+    
+    .card:hover,
+    .toilet-card:hover,
+    .feature-card:hover,
+    .stat-card:hover,
+    .btn:hover {
+        transform: none !important;
+    }
+}
+
+/* 高對比度偏好 */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000000;
+        --text-secondary: #000000;
+    }
+    
+    .card,
+    .toilet-card,
+    .feature-card,
+    .stat-card,
+    .search-filters,
+    .search-results,
+    .settings-group {
+        border: 2px solid #000000;
+    }
+    
+    .btn-primary {
+        background-color: #000000;
+        color: #ffffff;
+        border: 2px solid #000000;
+    }
+    
+    .btn-secondary {
+        background-color: transparent;
+        color: #000000;
+        border: 2px solid #000000;
+    }
+}
+
+/* 深色模式偏好 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-color: #121212;
+        --surface-color: #1e1e1e;
+        --text-primary: #ffffff;
+        --text-secondary: #b3b3b3;
+        --text-disabled: #666666;
+        --border-color: #333333;
+    }
+    
+    .hero-section {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    .hero-background {
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    }
+    
+    .search-box {
+        background-color: rgba(255, 255, 255, 0.1);
+    }
+    
+    .btn-primary {
+        background-color: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .btn-secondary {
+        border-color: rgba(255, 255, 255, 0.3);
+    }
+}
+
+/* 強制橫向模式 (某些特殊情況) */
+@media (orientation: landscape) and (max-height: 500px) {
+    .hero-section {
+        padding: var(--spacing-md) 0;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+    }
+    
+    .search-container {
+        margin-bottom: var(--spacing-md);
+    }
+    
+    .quick-actions {
+        flex-direction: row;
+        justify-content: center;
+        gap: var(--spacing-md);
+    }
+    
+    .stats-section,
+    .features-section {
+        padding: var(--spacing-lg) 0;
+    }
+}
+
+/* 強制直向模式 */
+@media (orientation: portrait) and (max-width: 768px) {
+    .quick-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .btn {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .filters {
+        grid-template-columns: 1fr;
+    }
+    
+    .toilets-list {
+        grid-template-columns: 1fr;
+    }
+}
