@@ -146,19 +146,51 @@ npm run dev:frontend
 - **TalkBack**: 完全支援
 - **Dragon**: 部分支援
 
-## 🚀 部署說明
+## 🚀 GitHub Pages 部署
 
-### GitHub Pages 部署
-1. 推送程式碼到GitHub
-2. 啟用GitHub Pages
-3. 設定GitHub Actions自動部署
-4. 配置自訂網域（可選）
+### 快速部署步驟
+
+1. **建立 GitHub 儲存庫**
+   - 前往 GitHub 建立新儲存庫
+   - 儲存庫名稱建議：`無障礙廁所GO-V2`
+
+2. **上傳程式碼**
+   ```bash
+   git init
+   git remote add origin https://github.com/YOUR_USERNAME/無障礙廁所GO-V2.git
+   git add .
+   git commit -m "Initial commit: 無障礙廁所GO V2"
+   git push -u origin main
+   ```
+
+3. **設定 GitHub Pages**
+   - 前往儲存庫 Settings → Pages
+   - Source 選擇 "GitHub Actions"
+
+4. **設定 Secrets**
+   - 前往 Settings → Secrets and variables → Actions
+   - 新增 `VITE_GOOGLE_MAPS_API_KEY` secret
+
+5. **自動部署**
+   - 推送程式碼後，GitHub Actions 會自動建置並部署
+   - 部署完成後可訪問：`https://YOUR_USERNAME.github.io/無障礙廁所GO-V2/`
+
+### Windows 一鍵部署
+```cmd
+deploy.bat
+```
+
+### 詳細部署指南
+請參考：[GitHub 部署指南](docs/GITHUB_DEPLOYMENT.md)
 
 ### 環境變數設定
 ```bash
-# 生產環境變數
+# 開發環境
+VITE_GOOGLE_MAPS_API_KEY=your-development-api-key
+VITE_NODE_ENV=development
+
+# 生產環境 (GitHub Actions 自動設定)
 VITE_GOOGLE_MAPS_API_KEY=your-production-api-key
-VITE_API_URL=https://api.accessible-toilet-go.com
 VITE_NODE_ENV=production
 ```
 
