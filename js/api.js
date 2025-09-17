@@ -5,10 +5,18 @@
  */
 class APIService {
     constructor() {
-        this.baseURL = window.CONFIG.API.BASE_URL;
-        this.apiKey = window.CONFIG.API.API_KEY;
-        this.timeout = window.CONFIG.API.TIMEOUT;
+        // 安全地初始化配置，避免在載入時出錯
+        this.baseURL = 'https://data.moenv.gov.tw/api/v2/fac_p_07';
+        this.apiKey = '58d6040c-dca7-407f-a244-d0bfdfa8144a';
+        this.timeout = 10000;
         this.cache = new Map();
+        
+        // 如果 CONFIG 可用，使用 CONFIG 的值
+        if (window.CONFIG && window.CONFIG.API) {
+            this.baseURL = window.CONFIG.API.BASE_URL;
+            this.apiKey = window.CONFIG.API.API_KEY;
+            this.timeout = window.CONFIG.API.TIMEOUT;
+        }
     }
 
     /**
@@ -548,3 +556,6 @@ window.API = {
     favorites: favoritesService,
     statistics: statisticsService
 };
+
+// 匯出服務類別供其他檔案使用
+window.APIService = apiService;

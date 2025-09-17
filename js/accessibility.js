@@ -46,8 +46,17 @@ class AccessibilityService {
             colorBlindSupport: false
         };
 
-        const savedSettings = Utils.Storage.get(window.CONFIG.CACHE.SETTINGS_KEY);
-        return savedSettings ? { ...defaultSettings, ...savedSettings } : defaultSettings;
+        // 安全地載入設定，避免在初始化時出錯
+        try {
+            if (window.CONFIG && window.CONFIG.CACHE && window.CONFIG.CACHE.SETTINGS_KEY && Utils && Utils.Storage) {
+                const savedSettings = Utils.Storage.get(window.CONFIG.CACHE.SETTINGS_KEY);
+                return savedSettings ? { ...defaultSettings, ...savedSettings } : defaultSettings;
+            }
+        } catch (error) {
+            console.warn('載入無障礙設定時發生錯誤，使用預設設定:', error);
+        }
+        
+        return defaultSettings;
     }
 
     /**

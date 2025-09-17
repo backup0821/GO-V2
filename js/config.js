@@ -165,12 +165,12 @@ if (typeof process !== 'undefined' && process.env) {
     }
 }
 
-// 瀏覽器環境變數覆蓋 (Vite)
-if (typeof import !== 'undefined' && import.meta && import.meta.env) {
-    if (import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
-        CONFIG.MAPS.API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-    }
-}
+// 瀏覽器環境變數覆蓋 (Vite) - 純 HTML/JS 環境中停用
+// if (typeof import !== 'undefined' && import.meta && import.meta.env) {
+//     if (import.meta.env.VITE_GOOGLE_MAPS_API_KEY) {
+//         CONFIG.MAPS.API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+//     }
+// }
 
 // 全域配置物件
 window.CONFIG = CONFIG;

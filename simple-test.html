@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡單測試 - 無障礙廁所GO V2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .success { border-color: #4CAF50; background-color: #f1f8e9; }
+        .error { border-color: #f44336; background-color: #ffebee; }
+        .warning { border-color: #ff9800; background-color: #fff3e0; }
+        .info { border-color: #2196F3; background-color: #e3f2fd; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 簡單腳本載入測試</h1>
+        <p>此頁面逐步載入腳本並檢查每個步驟。</p>
+        
+        <div id="test-results">
+            <div class="test-item info">
+                <strong>⏳ 準備載入腳本...</strong>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let testResults = document.getElementById('test-results');
+        
+        function addTestItem(message, type = 'info', details = null) {
+            const div = document.createElement('div');
+            div.className = `test-item ${type}`;
+            
+            let content = `<strong>${message}</strong>`;
+            if (details) {
+                content += `<pre>${details}</pre>`;
+            }
+            
+            div.innerHTML = content;
+            testResults.appendChild(div);
+        }
+        
+        function checkService(name, service) {
+            if (service) {
+                addTestItem(`✅ ${name} 載入成功`, 'success', 
+                    `類型: ${typeof service}, 建構函數: ${service.constructor?.name || 'N/A'}`);
+                return true;
+            } else {
+                addTestItem(`❌ ${name} 載入失敗`, 'error');
+                return false;
+            }
+        }
+        
+        // 逐步載入腳本
+        function loadScripts() {
+            addTestItem('📦 開始載入腳本...', 'info');
+            
+            // 載入 config.js
+            const script1 = document.createElement('script');
+            script1.src = 'js/config.js';
+            script1.onload = () => {
+                addTestItem('📄 config.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('CONFIG', window.CONFIG);
+                }, 100);
+            };
+            script1.onerror = () => {
+                addTestItem('❌ config.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script1);
+            
+            // 載入 utils.js
+            const script2 = document.createElement('script');
+            script2.src = 'js/utils.js';
+            script2.onload = () => {
+                addTestItem('📄 utils.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('Utils', window.Utils);
+                }, 100);
+            };
+            script2.onerror = () => {
+                addTestItem('❌ utils.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script2);
+            
+            // 載入 api.js
+            const script3 = document.createElement('script');
+            script3.src = 'js/api.js';
+            script3.onload = () => {
+                addTestItem('📄 api.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('APIService', window.APIService);
+                }, 100);
+            };
+            script3.onerror = () => {
+                addTestItem('❌ api.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script3);
+            
+            // 載入 map.js
+            const script4 = document.createElement('script');
+            script4.src = 'js/map.js';
+            script4.onload = () => {
+                addTestItem('📄 map.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('MapService', window.MapService);
+                }, 100);
+            };
+            script4.onerror = () => {
+                addTestItem('❌ map.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script4);
+            
+            // 載入 accessibility.js
+            const script5 = document.createElement('script');
+            script5.src = 'js/accessibility.js';
+            script5.onload = () => {
+                addTestItem('📄 accessibility.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('AccessibilityService', window.AccessibilityService);
+                }, 100);
+            };
+            script5.onerror = () => {
+                addTestItem('❌ accessibility.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script5);
+            
+            // 載入 navigation.js
+            const script6 = document.createElement('script');
+            script6.src = 'js/navigation.js';
+            script6.onload = () => {
+                addTestItem('📄 navigation.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('NavigationService', window.NavigationService);
+                }, 100);
+            };
+            script6.onerror = () => {
+                addTestItem('❌ navigation.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script6);
+            
+            // 載入 search.js
+            const script7 = document.createElement('script');
+            script7.src = 'js/search.js';
+            script7.onload = () => {
+                addTestItem('📄 search.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('SearchService', window.SearchService);
+                }, 100);
+            };
+            script7.onerror = () => {
+                addTestItem('❌ search.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script7);
+            
+            // 載入 main.js
+            const script8 = document.createElement('script');
+            script8.src = 'js/main.js';
+            script8.onload = () => {
+                addTestItem('📄 main.js 載入完成', 'info');
+                setTimeout(() => {
+                    checkService('App', window.App);
+                    
+                    // 最終檢查
+                    setTimeout(() => {
+                        addTestItem('🎯 最終檢查所有服務...', 'info');
+                        const allServices = ['CONFIG', 'Utils', 'APIService', 'AccessibilityService', 'NavigationService', 'SearchService', 'MapService', 'App'];
+                        let successCount = 0;
+                        
+                        allServices.forEach(service => {
+                            if (window[service]) {
+                                successCount++;
+                            }
+                        });
+                        
+                        if (successCount === allServices.length) {
+                            addTestItem(`🎉 所有服務載入成功！(${successCount}/${allServices.length})`, 'success');
+                        } else {
+                            addTestItem(`⚠️ 部分服務載入失敗 (${successCount}/${allServices.length})`, 'warning');
+                        }
+                    }, 500);
+                }, 100);
+            };
+            script8.onerror = () => {
+                addTestItem('❌ main.js 載入失敗', 'error');
+            };
+            document.head.appendChild(script8);
+        }
+        
+        // 頁面載入完成後開始載入腳本
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                loadScripts();
+            }, 100);
+        });
+    </script>
+</body>
+</html>
