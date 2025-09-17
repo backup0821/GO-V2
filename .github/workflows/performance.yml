@@ -1,0 +1,377 @@
+name: 效能測試 (Performance)
+
+on:
+  schedule:
+    # 每週二凌晨 4 點執行
+    - cron: '0 4 * * 2'
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: '測試類型'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+        - all
+        - api
+        - frontend
+        - database
+
+jobs:
+  # API 效能測試
+  api-performance:
+    name: API 效能測試
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'api' || github.event_name == 'schedule'
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 安裝依賴
+      run: |
+        cd backend
+        npm ci
+        
+    - name: 設定測試環境
+      run: |
+        cd backend
+        echo "DATABASE_URL=${{ secrets.TEST_DATABASE_URL }}" >> .env
+        echo "REDIS_URL=${{ secrets.TEST_REDIS_URL }}" >> .env
+        echo "NODE_ENV=test" >> .env
+        
+    - name: 執行 API 負載測試
+      run: |
+        cd backend
+        npm run test:performance:api
+        
+    - name: 執行 API 壓力測試
+      run: |
+        cd backend
+        npm run test:stress:api
+        
+    - name: 上傳 API 效能報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: api-performance-report
+        path: backend/reports/performance/
+
+  # 前端效能測試
+  frontend-performance:
+    name: 前端效能測試
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'frontend'
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 安裝依賴
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: 建置前端
+      run: |
+        cd frontend
+        npm run build
+        
+    - name: 分析建置包大小
+      run: |
+        cd frontend
+        npm run analyze:bundle
+        
+    - name: 執行 Lighthouse 測試
+      uses: treosh/lighthouse-ci-action@v10
+      with:
+        configPath: './frontend/lighthouse.config.js'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+        
+    - name: 執行 Playwright 效能測試
+      run: |
+        cd frontend
+        npx playwright test --config=playwright.config.js --grep="performance"
+        
+    - name: 上傳前端效能報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: frontend-performance-report
+        path: |
+          frontend/reports/
+          frontend/lighthouse-results/
+
+  # 資料庫效能測試
+  database-performance:
+    name: 資料庫效能測試
+    runs-on: ubuntu-latest
+    if: github.event.inputs.test_type == 'all' || github.event.inputs.test_type == 'database'
+    
+    services:
+      postgres:
+        image: postgis/postgis:14-3.2
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_USER: postgres
+          POSTGRES_DB: performance_test
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+          
+      redis:
+        image: redis:7-alpine
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 6379:6379
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 安裝依賴
+      run: |
+        cd backend
+        npm ci
+        
+    - name: 設定測試環境
+      run: |
+        cd backend
+        echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/performance_test" >> .env
+        echo "REDIS_URL=redis://localhost:6379" >> .env
+        echo "NODE_ENV=test" >> .env
+        
+    - name: 初始化測試資料
+      run: |
+        cd backend
+        npx prisma migrate deploy
+        npm run test:seed:performance
+        
+    - name: 執行資料庫效能測試
+      run: |
+        cd backend
+        npm run test:performance:database
+        
+    - name: 執行查詢效能分析
+      run: |
+        cd backend
+        npm run test:analyze:queries
+        
+    - name: 上傳資料庫效能報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: database-performance-report
+        path: backend/reports/database-performance/
+
+  # 端對端效能測試
+  e2e-performance:
+    name: 端對端效能測試
+    runs-on: ubuntu-latest
+    needs: [api-performance, frontend-performance]
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 安裝依賴
+      run: |
+        cd frontend
+        npm ci
+        cd ../backend
+        npm ci
+        
+    - name: 啟動測試環境
+      run: |
+        docker-compose -f docker-compose.test.yml up -d
+        
+    - name: 等待服務啟動
+      run: |
+        sleep 30
+        curl -f http://localhost:3001/api/health
+        curl -f http://localhost:3000
+        
+    - name: 執行端對端效能測試
+      run: |
+        cd frontend
+        npx playwright test --config=playwright.performance.config.js
+        
+    - name: 執行真實使用者模擬
+      run: |
+        cd backend
+        npm run test:performance:user-simulation
+        
+    - name: 停止測試環境
+      run: |
+        docker-compose -f docker-compose.test.yml down
+        
+    - name: 上傳端對端效能報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: e2e-performance-report
+        path: |
+          frontend/playwright-report/
+          backend/reports/user-simulation/
+
+  # 效能回歸檢測
+  performance-regression:
+    name: 效能回歸檢測
+    runs-on: ubuntu-latest
+    needs: [api-performance, frontend-performance, database-performance, e2e-performance]
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 下載所有效能報告
+      uses: actions/download-artifact@v3
+      
+    - name: 比較效能指標
+      run: |
+        echo "比較當前效能指標與基準值..."
+        node scripts/compare-performance.js
+        
+    - name: 檢查效能回歸
+      id: regression_check
+      run: |
+        REGRESSION_DETECTED=false
+        
+        # 檢查 API 回應時間
+        API_RESPONSE_TIME=$(node -e "const report = require('./api-performance-report/api-report.json'); console.log(report.avgResponseTime);")
+        if (( $(echo "$API_RESPONSE_TIME > 500" | bc -l) )); then
+          echo "API 回應時間過慢: ${API_RESPONSE_TIME}ms"
+          REGRESSION_DETECTED=true
+        fi
+        
+        # 檢查前端載入時間
+        FRONTEND_LOAD_TIME=$(node -e "const report = require('./frontend-performance-report/lighthouse-report.json'); console.log(report.audits['first-contentful-paint'].numericValue);")
+        if (( $(echo "$FRONTEND_LOAD_TIME > 2000" | bc -l) )); then
+          echo "前端載入時間過慢: ${FRONTEND_LOAD_TIME}ms"
+          REGRESSION_DETECTED=true
+        fi
+        
+        # 檢查資料庫查詢時間
+        DB_QUERY_TIME=$(node -e "const report = require('./database-performance-report/db-report.json'); console.log(report.avgQueryTime);")
+        if (( $(echo "$DB_QUERY_TIME > 100" | bc -l) )); then
+          echo "資料庫查詢時間過慢: ${DB_QUERY_TIME}ms"
+          REGRESSION_DETECTED=true
+        fi
+        
+        echo "regression_detected=$REGRESSION_DETECTED" >> $GITHUB_OUTPUT
+        
+    - name: 建立效能回歸 Issue
+      if: steps.regression_check.outputs.regression_detected == 'true'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          await github.rest.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: '[效能回歸] 檢測到效能下降問題',
+            body: `## 效能回歸檢測報告
+            
+            檢測到以下效能問題：
+            
+            ### API 效能
+            - 平均回應時間: ${process.env.API_RESPONSE_TIME}ms (基準: 500ms)
+            
+            ### 前端效能
+            - 首次內容繪製時間: ${process.env.FRONTEND_LOAD_TIME}ms (基準: 2000ms)
+            
+            ### 資料庫效能
+            - 平均查詢時間: ${process.env.DB_QUERY_TIME}ms (基準: 100ms)
+            
+            ### 建議處理方式
+            1. 檢查最近的程式碼變更
+            2. 分析效能瓶頸
+            3. 優化慢查詢和API端點
+            4. 考慮加入快取機制
+            
+            請開發團隊盡快處理效能問題。`,
+            labels: ['performance', 'regression', 'high-priority']
+          });
+
+  # 產生效能報告
+  generate-performance-report:
+    name: 產生效能報告
+    runs-on: ubuntu-latest
+    needs: [performance-regression]
+    if: always()
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 下載所有報告
+      uses: actions/download-artifact@v3
+      
+    - name: 產生綜合效能報告
+      run: |
+        echo "# 效能測試報告" > performance_summary.md
+        echo "測試時間: $(date)" >> performance_summary.md
+        echo "" >> performance_summary.md
+        
+        echo "## 測試結果摘要" >> performance_summary.md
+        echo "- API 效能測試: ${{ needs.api-performance.result }}" >> performance_summary.md
+        echo "- 前端效能測試: ${{ needs.frontend-performance.result }}" >> performance_summary.md
+        echo "- 資料庫效能測試: ${{ needs.database-performance.result }}" >> performance_summary.md
+        echo "- 端對端效能測試: ${{ needs.e2e-performance.result }}" >> performance_summary.md
+        echo "- 效能回歸檢測: ${{ needs.performance-regression.result }}" >> performance_summary.md
+        echo "" >> performance_summary.md
+        
+        echo "## 效能指標" >> performance_summary.md
+        echo "詳細的效能指標請查看各項測試的報告檔案。" >> performance_summary.md
+        
+    - name: 上傳綜合報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-summary-report
+        path: performance_summary.md
+        
+    - name: 發送效能報告到 Slack
+      uses: 8398a7/action-slack@v3
+      if: always()
+      with:
+        status: ${{ job.status }}
+        channel: '#performance'
+        text: |
+          效能測試完成！
+          
+          測試結果:
+          - API 效能測試: ${{ needs.api-performance.result }}
+          - 前端效能測試: ${{ needs.frontend-performance.result }}
+          - 資料庫效能測試: ${{ needs.database-performance.result }}
+          - 端對端效能測試: ${{ needs.e2e-performance.result }}
+          - 效能回歸檢測: ${{ needs.performance-regression.result }}
+          
+          詳細報告請查看 GitHub Actions。
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

@@ -1,0 +1,243 @@
+name: 安全性掃描 (Security)
+
+on:
+  schedule:
+    # 每週日凌晨 3 點執行
+    - cron: '0 3 * * 0'
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  # 依賴漏洞掃描
+  dependency-scan:
+    name: 依賴漏洞掃描
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 安裝前端依賴
+      run: |
+        cd frontend
+        npm ci
+        
+    - name: 安裝後端依賴
+      run: |
+        cd backend
+        npm ci
+        
+    - name: 執行 npm audit (前端)
+      run: |
+        cd frontend
+        npm audit --audit-level=moderate --json > ../frontend-audit.json || true
+        
+    - name: 執行 npm audit (後端)
+      run: |
+        cd backend
+        npm audit --audit-level=moderate --json > ../backend-audit.json || true
+        
+    - name: 上傳審計報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: npm-audit-reports
+        path: |
+          frontend-audit.json
+          backend-audit.json
+
+  # 程式碼安全性掃描
+  code-scan:
+    name: 程式碼安全性掃描
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 執行 CodeQL 分析
+      uses: github/codeql-action/init@v3
+      with:
+        languages: javascript, typescript
+        
+    - name: 自動建置
+      uses: github/codeql-action/autobuild@v3
+        
+    - name: 執行 CodeQL 分析
+      uses: github/codeql-action/analyze@v3
+      
+    - name: 執行 Semgrep 掃描
+      uses: returntocorp/semgrep-action@v1
+      with:
+        config: >-
+          p/security-audit
+          p/secrets
+          p/owasp-top-ten
+        generateSarif: "1"
+        
+    - name: 上傳 Semgrep SARIF
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: semgrep.sarif
+
+  # Docker 映像安全性掃描
+  docker-scan:
+    name: Docker 映像安全性掃描
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 建置 Docker 映像
+      run: |
+        docker build -t frontend:test ./frontend
+        docker build -t backend:test ./backend
+        
+    - name: 執行 Trivy 掃描
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'frontend:test'
+        format: 'sarif'
+        output: 'frontend-trivy-results.sarif'
+        
+    - name: 上傳前端 Trivy 結果
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'frontend-trivy-results.sarif'
+        
+    - name: 執行 Trivy 掃描 (後端)
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'backend:test'
+        format: 'sarif'
+        output: 'backend-trivy-results.sarif'
+        
+    - name: 上傳後端 Trivy 結果
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: 'backend-trivy-results.sarif'
+
+  # 敏感資訊檢查
+  secrets-scan:
+    name: 敏感資訊檢查
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        
+    - name: 執行 TruffleHog 掃描
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        extra_args: --debug --only-verified
+
+  # 安全性測試
+  security-test:
+    name: 安全性測試
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-scan]
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 設定 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        
+    - name: 安裝依賴
+      run: |
+        cd backend
+        npm ci
+        
+    - name: 設定測試環境
+      run: |
+        cd backend
+        echo "DATABASE_URL=postgresql://test:test@localhost:5432/test" >> .env
+        echo "JWT_SECRET=test-secret" >> .env
+        echo "NODE_ENV=test" >> .env
+        
+    - name: 執行安全性測試
+      run: |
+        cd backend
+        npm run test:security
+        
+    - name: 執行滲透測試
+      run: |
+        cd backend
+        npm run test:penetration
+
+  # 產生安全性報告
+  security-report:
+    name: 產生安全性報告
+    runs-on: ubuntu-latest
+    needs: [dependency-scan, code-scan, docker-scan, secrets-scan, security-test]
+    if: always()
+    
+    steps:
+    - name: 檢出程式碼
+      uses: actions/checkout@v4
+      
+    - name: 下載所有掃描報告
+      uses: actions/download-artifact@v3
+      with:
+        name: npm-audit-reports
+        
+    - name: 產生安全性摘要報告
+      run: |
+        echo "# 安全性掃描報告" > security_report.md
+        echo "掃描時間: $(date)" >> security_report.md
+        echo "" >> security_report.md
+        
+        echo "## 掃描結果摘要" >> security_report.md
+        echo "- 依賴漏洞掃描: ${{ needs.dependency-scan.result }}" >> security_report.md
+        echo "- 程式碼安全性掃描: ${{ needs.code-scan.result }}" >> security_report.md
+        echo "- Docker 映像掃描: ${{ needs.docker-scan.result }}" >> security_report.md
+        echo "- 敏感資訊檢查: ${{ needs.secrets-scan.result }}" >> security_report.md
+        echo "- 安全性測試: ${{ needs.security-test.result }}" >> security_report.md
+        echo "" >> security_report.md
+        
+        echo "## 詳細報告" >> security_report.md
+        echo "請查看 GitHub Security 頁面以獲取詳細的安全建議和修復指南。" >> security_report.md
+        
+    - name: 上傳安全性報告
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-report
+        path: security_report.md
+        
+    - name: 發送安全性摘要到 Slack
+      uses: 8398a7/action-slack@v3
+      if: always()
+      with:
+        status: ${{ job.status }}
+        channel: '#security'
+        text: |
+          安全性掃描完成！
+          
+          掃描結果:
+          - 依賴漏洞掃描: ${{ needs.dependency-scan.result }}
+          - 程式碼安全性掃描: ${{ needs.code-scan.result }}
+          - Docker 映像掃描: ${{ needs.docker-scan.result }}
+          - 敏感資訊檢查: ${{ needs.secrets-scan.result }}
+          - 安全性測試: ${{ needs.security-test.result }}
+          
+          詳細報告請查看 GitHub Security 頁面。
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
