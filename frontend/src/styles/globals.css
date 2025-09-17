@@ -1,0 +1,404 @@
+/* 全域樣式 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Noto Sans TC', 'Roboto', 'Helvetica Neue', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--background-color, #f5f5f5);
+  color: var(--text-color, #212121);
+  line-height: 1.6;
+}
+
+/* CSS變數定義 */
+:root {
+  --primary-color: #1976d2;
+  --primary-light: #42a5f5;
+  --primary-dark: #1565c0;
+  --secondary-color: #dc004e;
+  --background-color: #f5f5f5;
+  --paper-color: #ffffff;
+  --text-color: #212121;
+  --text-secondary: #757575;
+  --border-color: #e0e0e0;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --info-color: #2196f3;
+  
+  /* 無障礙相關變數 */
+  --font-size-multiplier: 1;
+  --contrast-mode: normal;
+  --animation-duration: 0.3s;
+  
+  /* 間距 */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* 陰影 */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --shadow-lg: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+}
+
+/* 高對比模式 */
+:root[style*="--contrast-mode: high"] {
+  --background-color: #000000;
+  --paper-color: #ffffff;
+  --text-color: #ffffff;
+  --text-secondary: #ffffff;
+  --border-color: #ffffff;
+  --primary-color: #ffff00;
+  --secondary-color: #00ffff;
+}
+
+/* 大字體模式 */
+:root[style*="--font-size-multiplier"] {
+  font-size: calc(16px * var(--font-size-multiplier));
+}
+
+/* 鍵盤導航模式 */
+.keyboard-navigation *:focus {
+  outline: 3px solid var(--primary-color) !important;
+  outline-offset: 2px !important;
+}
+
+/* 色彩盲友善模式 */
+.colorblind-friendly {
+  --success-color: #00a651;
+  --warning-color: #ff6900;
+  --error-color: #e60012;
+  --info-color: #0072ce;
+}
+
+/* 減少動畫模式 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* 螢幕閱讀器專用樣式 */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* 跳過連結 */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--primary-color);
+  color: white;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* 載入動畫 */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+/* 淡入動畫 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn var(--animation-duration) ease-out;
+}
+
+/* 響應式設計 */
+@media (max-width: 768px) {
+  :root {
+    --spacing-md: 12px;
+    --spacing-lg: 16px;
+    --spacing-xl: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --spacing-md: 8px;
+    --spacing-lg: 12px;
+    --spacing-xl: 16px;
+  }
+}
+
+/* 列印樣式 */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .page-break {
+    page-break-before: always;
+  }
+}
+
+/* 無障礙輔助類別 */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.focus-visible:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 高對比度模式下的按鈕樣式 */
+.high-contrast .MuiButton-root {
+  border: 2px solid currentColor !important;
+}
+
+.high-contrast .MuiButton-contained {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+.high-contrast .MuiButton-outlined {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+}
+
+/* 地圖容器樣式 */
+.map-container {
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* 廁所卡片樣式 */
+.toilet-card {
+  transition: transform var(--animation-duration) ease, box-shadow var(--animation-duration) ease;
+  cursor: pointer;
+}
+
+.toilet-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.toilet-card:focus {
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+/* 評分星星樣式 */
+.rating-stars {
+  display: flex;
+  gap: 2px;
+  align-items: center;
+}
+
+.rating-star {
+  color: #ffc107;
+  font-size: 1.2em;
+}
+
+.rating-star.empty {
+  color: #e0e0e0;
+}
+
+/* 無障礙設施圖示 */
+.accessibility-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: var(--success-color);
+  color: white;
+  border-radius: 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.accessibility-icon.unavailable {
+  background-color: var(--text-secondary);
+}
+
+/* 距離標示 */
+.distance-badge {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* 狀態指示器 */
+.status-indicator {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.status-indicator.excellent {
+  background-color: var(--success-color);
+}
+
+.status-indicator.good {
+  background-color: var(--info-color);
+}
+
+.status-indicator.average {
+  background-color: var(--warning-color);
+}
+
+.status-indicator.poor {
+  background-color: var(--error-color);
+}
+
+/* 載入狀態 */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* 錯誤狀態 */
+.error-message {
+  background-color: #ffebee;
+  color: var(--error-color);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  border-left: 4px solid var(--error-color);
+  margin: var(--spacing-md) 0;
+}
+
+/* 成功狀態 */
+.success-message {
+  background-color: #e8f5e8;
+  color: var(--success-color);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  border-left: 4px solid var(--success-color);
+  margin: var(--spacing-md) 0;
+}
+
+/* 資訊提示 */
+.info-message {
+  background-color: #e3f2fd;
+  color: var(--info-color);
+  padding: var(--spacing-md);
+  border-radius: 8px;
+  border-left: 4px solid var(--info-color);
+  margin: var(--spacing-md) 0;
+}
+
+/* 工具提示 */
+.tooltip {
+  position: relative;
+  display: inline-block;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 200px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -100px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* 滾動條樣式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* 選取文字樣式 */
+::selection {
+  background-color: var(--primary-light);
+  color: white;
+}
+
+::-moz-selection {
+  background-color: var(--primary-light);
+  color: white;
+}
