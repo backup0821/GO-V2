@@ -242,7 +242,7 @@ class LocationService {
                     };
                     
                     this.currentLocation = location;
-                    Utils.Storage.set(CONFIG.CACHE.LOCATION_KEY, location);
+                    Utils.Storage.set(window.CONFIG.CACHE.LOCATION_KEY, location);
                     
                     resolve(location);
                 },

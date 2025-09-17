@@ -137,7 +137,7 @@ function isValidPhone(phone) {
  * @returns {string} 顏色代碼
  */
 function getToiletTypeColor(type) {
-    return CONFIG.TOILET_TYPES[type]?.color || '#757575';
+    return window.CONFIG.TOILET_TYPES[type]?.color || '#757575';
 }
 
 /**
