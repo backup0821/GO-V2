@@ -622,14 +622,8 @@ class SearchService {
 
         mapPreview.style.display = 'block';
 
-        // 初始化地圖
-        if (!MapService.isInitialized) {
-            MapService.initializeMap('map').then(() => {
-                this.addToiletsToMap(toilets, location);
-            });
-        } else {
-            this.addToiletsToMap(toilets, location);
-        }
+        // 地圖功能維護中，只顯示維護訊息
+        console.log('地圖功能維護中，顯示維護訊息');
     }
 
     /**
@@ -648,25 +642,8 @@ class SearchService {
      * @param {Object} location - 使用者位置
      */
     addToiletsToMap(toilets, location = null) {
-        if (!MapService.isInitialized) return;
-
-        // 清除現有標記
-        MapService.clearMarkers();
-
-        // 新增使用者位置
-        if (location) {
-            MapService.addUserLocationMarker(location);
-        }
-
-        // 新增廁所標記
-        toilets.forEach(toilet => {
-            MapService.addToiletMarker(toilet, (toiletData, marker) => {
-                this.showToiletDetails(toiletData.id);
-            });
-        });
-
-        // 調整地圖視窗
-        MapService.fitBounds(toilets);
+        // 地圖功能維護中，不執行地圖相關操作
+        console.log('地圖功能維護中，跳過地圖標記操作');
     }
 
     /**

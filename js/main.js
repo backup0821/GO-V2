@@ -22,6 +22,9 @@ class App {
         try {
             console.log(`無障礙廁所GO V2 v${this.version} 正在初始化...`);
 
+            // 檢查維護狀態
+            await this.checkMaintenanceStatus();
+
             // 初始化服務
             await this.initializeServices();
 
@@ -49,6 +52,25 @@ class App {
         } catch (error) {
             console.error('應用程式初始化失敗:', error);
             this.handleInitializationError(error);
+        }
+    }
+
+    /**
+     * 檢查維護狀態
+     */
+    async checkMaintenanceStatus() {
+        try {
+            const response = await fetch('maintenance-status.json');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.maintenance === true) {
+                    console.log('系統正在維護中，重新導向到維護頁面');
+                    window.location.href = 'maintenance.html';
+                    return;
+                }
+            }
+        } catch (error) {
+            console.log('無法檢查維護狀態，繼續正常初始化');
         }
     }
 
