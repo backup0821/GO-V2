@@ -1,0 +1,100 @@
+version: '3.8'
+
+services:
+  # PostgreSQL 資料庫
+  postgres:
+    image: postgis/postgis:14-3.2
+    container_name: accessible-toilet-postgres
+    environment:
+      POSTGRES_DB: accessible_toilet_go
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/prisma/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
+  # Redis 快取
+  redis:
+    image: redis:7-alpine
+    container_name: accessible-toilet-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+  # 後端應用程式
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: accessible-toilet-backend
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/accessible_toilet_go
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: your-jwt-secret-key
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - app-network
+    command: npm run dev
+
+  # 前端應用程式
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: accessible-toilet-frontend
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:3001/api
+      VITE_GOOGLE_MAPS_API_KEY: your-google-maps-api-key
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - app-network
+    command: npm run dev
+
+  # Nginx 反向代理 (生產環境)
+  nginx:
+    image: nginx:alpine
+    container_name: accessible-toilet-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/ssl:/etc/nginx/ssl
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - app-network
+    profiles:
+      - production
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
