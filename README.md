@@ -1,24 +1,41 @@
 # 無障礙廁所GO V2
 
-![License](https://img.shields.io/badge/license-CC%20BY--NC%204.0-blue.svg)
-![Version](https://img.shields.io/badge/version-2.0.0-green.svg)
-![Accessibility](https://img.shields.io/badge/accessibility-WCAG%202.1%20AA-green.svg)
+![專案標誌](docs/assets/logo.png)
 
-為身心障礙人士提供最近公共廁所/無障礙廁所查詢服務的網站應用程式。
+## 專案簡介
 
-## 🌟 特色功能
+無障礙廁所GO V2 是一個專為身心障礙人士設計的網站應用程式，提供即時查詢最近公共廁所和無障礙廁所的功能。透過地理位置定位和友善的介面設計，讓使用者能夠快速找到符合需求的廁所設施。
 
-- **精確定位** - 使用GPS定位技術，快速找到最近的廁所
-- **無障礙友善** - 詳細的無障礙設施資訊，讓每個人都能輕鬆使用
-- **智慧搜尋** - 支援關鍵字搜尋、篩選條件，快速找到符合需求的廁所
-- **安全可靠** - 資料來源於環保署官方API，資訊準確可靠
-- **完全無障礙** - 遵循WCAG 2.1 AA級標準，支援各種輔助技術
+## 主要功能
 
-## 🚀 快速開始
+- 🗺️ **地理位置定位**: 自動獲取使用者當前位置，提供最近距離的廁所資訊
+- ♿ **無障礙設施查詢**: 詳細顯示輪椅通道、扶手、緊急按鈕等無障礙設施
+- 🔍 **智慧搜尋**: 支援地址搜尋、設施篩選、評分排序等多種查詢方式
+- ⭐ **評分系統**: 使用者可對廁所進行評分和評論，提供真實使用體驗
+- 📱 **響應式設計**: 支援各種裝置，包括手機、平板、桌面電腦
+- ♿ **無障礙設計**: 遵循WCAG 2.1 AA級標準，支援螢幕閱讀器和鍵盤導航
+
+## 技術架構
+
+### 前端
+- React 18 + TypeScript
+- Material-UI (MUI)
+- Google Maps API
+- Redux Toolkit
+- Vite
+
+### 後端
+- Node.js + Express.js
+- PostgreSQL + PostGIS
+- Prisma ORM
+- Redis
+
+## 快速開始
 
 ### 環境需求
-- 現代瀏覽器 (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
-- Google Maps API Key
+- Node.js 18+
+- PostgreSQL 14+
+- Redis 6+
 
 ### 安裝步驟
 
@@ -28,34 +45,27 @@ git clone https://github.com/YOUR_USERNAME/無障礙廁所GO-V2.git
 cd 無障礙廁所GO-V2
 ```
 
-2. **設定 Google Maps API Key**
-   - 前往 [Google Cloud Console](https://console.cloud.google.com/)
-   - 建立新專案或選擇現有專案
-   - 啟用 Maps JavaScript API
-   - 建立 API 金鑰
-   - 在 `js/config.js` 中設定您的 API Key：
-   ```javascript
-   MAPS: {
-       API_KEY: 'YOUR_GOOGLE_MAPS_API_KEY'
-   }
-   ```
+2. **安裝依賴**
+```bash
+npm run setup
+```
 
-3. **開啟網站**
-   - 直接在瀏覽器中開啟 `index.html`
-   - 或使用本地伺服器：
-   ```bash
-   # 使用 Python
-   python -m http.server 8000
-   
-   # 使用 Node.js
-   npx serve .
-   
-   # 使用 PHP
-   php -S localhost:8000
-   ```
+3. **設定環境變數**
+```bash
+# 複製環境變數範本
+cp frontend/env.example frontend/.env
 
-4. **訪問網站**
-   - 開啟瀏覽器訪問 `http://localhost:8000`
+# 編輯環境變數檔案，填入Google Maps API金鑰
+# 需要申請 Google Maps API Key 並啟用 Maps JavaScript API
+```
+
+4. **啟動開發伺服器**
+```bash
+npm run dev:frontend
+```
+
+5. **開啟瀏覽器**
+訪問 http://localhost:3000
 
 ## 🌐 GitHub Pages 部署
 
@@ -78,192 +88,110 @@ cd 無障礙廁所GO-V2
    - GitHub Actions 會自動建置並部署網站
    - 部署完成後可訪問：`https://YOUR_USERNAME.github.io/無障礙廁所GO-V2/`
 
-### Windows 一鍵部署
-```cmd
-deploy.bat
-```
-
 詳細部署說明請參考：[GitHub 部署指南](docs/GITHUB_DEPLOYMENT.md)
 
-## 📁 專案結構
+## 專案結構
 
 ```
 無障礙廁所GO V2/
-├── index.html              # 主要HTML檔案
-├── manifest.json           # PWA清單檔案
-├── robots.txt              # 搜尋引擎爬蟲規則
-├── sitemap.xml             # 網站地圖
-├── css/                    # 樣式檔案
-│   ├── styles.css          # 主要樣式
-│   ├── accessibility.css   # 無障礙樣式
-│   └── responsive.css      # 響應式樣式
-├── js/                     # JavaScript檔案
-│   ├── config.js           # 配置檔案
-│   ├── utils.js            # 工具函數
-│   ├── api.js              # API服務
-│   ├── map.js              # 地圖服務
-│   ├── accessibility.js    # 無障礙功能
-│   ├── navigation.js       # 導航功能
-│   ├── search.js           # 搜尋功能
-│   └── main.js             # 主要應用程式
-├── icons/                  # 應用程式圖示
-├── docs/                   # 文檔
-│   ├── API.md              # API文檔
-│   ├── CONTRIBUTING.md     # 貢獻指南
-│   ├── GITHUB_SETUP.md     # GitHub設定指南
-│   └── GITHUB_DEPLOYMENT.md # 部署指南
-├── deploy.bat              # Windows部署腳本
-├── setup-github.bat        # GitHub初始化腳本
-└── README.md               # 專案說明
+├── frontend/                 # 前端應用程式
+│   ├── src/
+│   │   ├── components/       # 可重用元件
+│   │   ├── pages/           # 頁面元件
+│   │   ├── hooks/           # 自定義Hooks
+│   │   ├── services/        # API服務
+│   │   ├── store/           # Redux狀態管理
+│   │   └── utils/           # 工具函數
+│   └── package.json
+├── backend/                  # 後端應用程式
+│   ├── src/
+│   │   ├── controllers/     # 控制器
+│   │   ├── models/          # 資料模型
+│   │   ├── routes/          # 路由定義
+│   │   └── services/        # 業務邏輯
+│   └── package.json
+├── docs/                     # 專案文檔
+├── dev.md                    # 主要開發文檔
+└── README.md
 ```
 
-## 🎨 技術架構
+## 開發指南
 
-### 前端技術
-- **HTML5** - 語意化標記，無障礙支援
-- **CSS3** - 響應式設計，CSS變數，動畫效果
-- **JavaScript ES6+** - 模組化架構，現代語法
-- **Google Maps API** - 地圖顯示和定位功能
-- **PWA** - 漸進式網頁應用程式
+詳細的開發文檔請參考 [dev.md](dev.md)
 
-### 無障礙功能
-- **WCAG 2.1 AA級標準** - 完全符合無障礙標準
-- **鍵盤導航** - 完整的鍵盤操作支援
-- **螢幕閱讀器** - 支援JAWS、NVDA、VoiceOver等
-- **高對比模式** - 視覺障礙者友善
-- **大字體模式** - 可調整字體大小
-- **減少動畫** - 尊重使用者偏好設定
+### 開發指令
 
-### 資料來源
-- **環保署公共廁所API** - 官方資料來源
-- **即時更新** - 資料定期更新
-- **本地快取** - 提升載入速度
-
-## 🎯 使用方式
-
-### 基本功能
-1. **搜尋廁所** - 在首頁輸入關鍵字或點擊「取得我的位置」
-2. **篩選結果** - 使用類型、等級等篩選條件
-3. **查看詳情** - 點擊廁所卡片查看詳細資訊
-4. **導航前往** - 點擊導航按鈕開啟Google Maps導航
-
-### 無障礙功能
-1. **鍵盤導航** - 使用Tab鍵導航，Enter鍵確認
-2. **螢幕閱讀器** - 支援各種螢幕閱讀器軟體
-3. **高對比模式** - 在無障礙設定中啟用
-4. **大字體模式** - 調整字體大小至適合的程度
-
-### 快捷鍵
-- `Ctrl + /` - 聚焦搜尋框
-- `Alt + 1` - 前往首頁
-- `Alt + 2` - 前往搜尋頁面
-- `Alt + 3` - 前往無障礙設定
-- `Alt + 4` - 前往關於我們
-- `Alt + A` - 開啟無障礙設定
-- `Esc` - 關閉模態框
-
-## 🔧 開發指南
-
-### 本地開發
 ```bash
-# 啟動開發伺服器
-python -m http.server 8000
+# 啟動開發環境
+npm run dev
 
-# 或使用其他工具
-npx serve .
+# 執行測試
+npm run test
+
+# 程式碼檢查
+npm run lint
+
+# 建置專案
+npm run build
 ```
 
-### 程式碼風格
-- 使用 ESLint 和 Prettier 保持程式碼一致性
-- 遵循語意化HTML標準
-- 使用BEM命名規範
-- 註解使用繁體中文
+## 無障礙功能
 
-### 測試
-- 手動測試各種瀏覽器
-- 測試無障礙功能
-- 測試響應式設計
-- 測試離線功能
+本專案特別注重無障礙設計，包含以下功能：
 
-## 📊 效能優化
+- **螢幕閱讀器支援**: 完整的ARIA標籤和語義化HTML
+- **鍵盤導航**: 支援Tab鍵和方向鍵導航
+- **高對比模式**: 提供高對比度主題選項
+- **字體縮放**: 支援瀏覽器字體縮放功能
+- **語音提示**: 整合語音導航功能
 
-- **圖片優化** - 使用WebP格式，延遲載入
-- **程式碼分割** - 按需載入JavaScript模組
-- **快取策略** - 本地儲存和服務工作者快取
-- **壓縮** - Gzip壓縮，最小化CSS/JS
-- **CDN** - 使用CDN加速靜態資源
+## 貢獻指南
 
-## 🌍 瀏覽器支援
+我們歡迎所有形式的貢獻！請參考 [CONTRIBUTING.md](docs/CONTRIBUTING.md) 了解詳細的貢獻指南。
 
-| 瀏覽器 | 最低版本 | 支援狀態 |
-|--------|----------|----------|
-| Chrome | 90+ | ✅ 完全支援 |
-| Firefox | 88+ | ✅ 完全支援 |
-| Safari | 14+ | ✅ 完全支援 |
-| Edge | 90+ | ✅ 完全支援 |
-| IE | - | ❌ 不支援 |
+### 如何貢獻
 
-## 📱 行動裝置支援
+1. Fork 本專案
+2. 建立您的功能分支 (`git checkout -b feature/AmazingFeature`)
+3. 提交您的變更 (`git commit -m 'Add some AmazingFeature'`)
+4. 推送到分支 (`git push origin feature/AmazingFeature`)
+5. 開啟一個 Pull Request
 
-- **響應式設計** - 適配各種螢幕尺寸
-- **觸控優化** - 適合觸控操作的介面
-- **PWA支援** - 可安裝到主畫面
-- **離線功能** - 基本功能可離線使用
+## 授權條款
 
-## 🤝 貢獻指南
+本專案採用創用 CC 姓名標示-非商業性 4.0 國際 授權條款 - 詳見 [LICENSE](LICENSE) 檔案
 
-我們歡迎社群貢獻！請參考 [CONTRIBUTING.md](docs/CONTRIBUTING.md) 了解詳細的貢獻流程。
+您可自由：
+- 分享 — 以任何媒介或格式重製及散布本素材
+- 修改 — 重混、轉換本素材、及依本素材建立新素材
 
-### 貢獻方式
-1. Fork 專案
-2. 建立功能分支
-3. 提交變更
-4. 發起 Pull Request
+惟須遵守下列條件：
+- 姓名標示 — 您必須給予適當表彰、提供指向本授權條款的連結
+- 非商業性 — 您不得將本素材用於商業目的
 
-### 回報問題
-- 使用 GitHub Issues 回報問題
-- 提供詳細的重現步驟
-- 包含瀏覽器和作業系統資訊
+## 聯絡我們
 
-## 📄 授權條款
-
-本專案採用 [創用CC 姓名標示-非商業性 4.0 國際授權條款](LICENSE)。
-
-### 授權摘要
-- ✅ **分享** - 您可以複製和重新散布素材
-- ✅ **修改** - 您可以重新混合、轉換和建立新素材
-- ⚠️ **姓名標示** - 您必須提供適當的表彰
-- ❌ **非商業性** - 您不得將素材用於商業目的
-
-## 📞 聯絡我們
-
+- **專案維護者**: LKJH MAKER 鹿中創客
 - **電子郵件**: contact@lkjh-maker.com
-- **GitHub**: [lkjh-maker](https://github.com/lkjh-maker)
-- **網站**: [lkjh-maker.com](https://lkjh-maker.com)
+- **網站**: https://lkjh-maker.com
 
-## 🙏 致謝
+## 致謝
 
-- **行政院環境保護署** - 提供公共廁所資料API
-- **Google Maps** - 提供地圖服務
-- **社群貢獻者** - 感謝所有貢獻者
-- **無障礙社群** - 提供寶貴的建議和回饋
+感謝所有為無障礙環境努力的開發者和志工！
 
-## 📈 版本歷史
+## 更新日誌
 
-### v2.0.0 (2024-01-01)
-- 🎉 全新設計，純HTML/CSS/JavaScript實作
-- ♿ 完全無障礙，符合WCAG 2.1 AA標準
-- 📱 響應式設計，支援各種裝置
-- 🗺️ 整合Google Maps API
-- 🔍 智慧搜尋和篩選功能
-- 💾 本地快取和離線支援
-- 🎨 現代化UI設計
+### v2.0.0 (開發中)
+- 重新設計使用者介面
+- 優化無障礙功能
+- 新增評分和評論系統
+- 改善搜尋和篩選功能
 
-### v1.0.0 (2023-12-01)
-- 🚀 初始版本發布
-- 📊 基本廁所查詢功能
-- 🗺️ 簡單地圖顯示
+### v1.0.0
+- 初始版本發布
+- 基本地圖和搜尋功能
+- 無障礙廁所資料庫
 
 ---
 
-**無障礙廁所GO V2** - 讓每個人都能輕鬆找到適合的廁所設施 🚽♿
+**讓每個人都能輕鬆找到適合的廁所設施！** ♿💙

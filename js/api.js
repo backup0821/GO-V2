@@ -5,9 +5,9 @@
  */
 class APIService {
     constructor() {
-        this.baseURL = CONFIG.API.BASE_URL;
-        this.apiKey = CONFIG.API.API_KEY;
-        this.timeout = CONFIG.API.TIMEOUT;
+        this.baseURL = window.CONFIG.API.BASE_URL;
+        this.apiKey = window.CONFIG.API.API_KEY;
+        this.timeout = window.CONFIG.API.TIMEOUT;
         this.cache = new Map();
     }
 
@@ -43,7 +43,7 @@ class APIService {
             clearTimeout(timeoutId);
             
             if (error.name === 'AbortError') {
-                throw new Error(CONFIG.MESSAGES.API_ERROR);
+                throw new Error(window.CONFIG.MESSAGES.API_ERROR);
             }
             
             throw error;
@@ -55,11 +55,11 @@ class APIService {
      * @param {number} limit - 限制數量
      * @returns {Promise<Array>} 廁所資料列表
      */
-    async getAllToilets(limit = CONFIG.API.LIMIT) {
+    async getAllToilets(limit = window.CONFIG.API.LIMIT) {
         const cacheKey = `toilets_${limit}`;
         const cached = this.cache.get(cacheKey);
         
-        if (cached && Date.now() - cached.timestamp < CONFIG.CACHE.CACHE_DURATION) {
+        if (cached && Date.now() - cached.timestamp < window.CONFIG.CACHE.CACHE_DURATION) {
             return cached.data;
         }
 
@@ -76,19 +76,19 @@ class APIService {
             });
 
             // 儲存到本地儲存
-            Utils.Storage.set(CONFIG.CACHE.TOILETS_KEY, toilets, CONFIG.CACHE.CACHE_DURATION);
+            Utils.Storage.set(window.CONFIG.CACHE.TOILETS_KEY, toilets, window.CONFIG.CACHE.CACHE_DURATION);
             
             return toilets;
         } catch (error) {
             console.error('取得廁所資料失敗:', error);
             
             // 嘗試從本地儲存取得
-            const localData = Utils.Storage.get(CONFIG.CACHE.TOILETS_KEY);
+            const localData = Utils.Storage.get(window.CONFIG.CACHE.TOILETS_KEY);
             if (localData) {
                 return localData;
             }
             
-            throw new Error(CONFIG.MESSAGES.API_ERROR);
+            throw new Error(window.CONFIG.MESSAGES.API_ERROR);
         }
     }
 
@@ -135,7 +135,7 @@ class APIService {
             };
         } catch (error) {
             console.error('搜尋附近廁所失敗:', error);
-            throw new Error(CONFIG.MESSAGES.SEARCH_ERROR);
+            throw new Error(window.CONFIG.MESSAGES.SEARCH_ERROR);
         }
     }
 
@@ -151,7 +151,7 @@ class APIService {
             return toilet || null;
         } catch (error) {
             console.error('取得廁所詳情失敗:', error);
-            throw new Error(CONFIG.MESSAGES.API_ERROR);
+            throw new Error(window.CONFIG.MESSAGES.API_ERROR);
         }
     }
 
@@ -219,10 +219,10 @@ class LocationService {
      */
     async getCurrentPosition(options = {}) {
         return new Promise((resolve, reject) => {
-            if (!navigator.geolocation) {
-                reject(new Error(CONFIG.MESSAGES.LOCATION_ERROR));
-                return;
-            }
+        if (!navigator.geolocation) {
+            reject(new Error(window.CONFIG.MESSAGES.LOCATION_ERROR));
+            return;
+        }
 
             const defaultOptions = {
                 enableHighAccuracy: true,
@@ -247,17 +247,17 @@ class LocationService {
                     resolve(location);
                 },
                 (error) => {
-                    let errorMessage = CONFIG.MESSAGES.LOCATION_ERROR;
+                    let errorMessage = window.CONFIG.MESSAGES.LOCATION_ERROR;
                     
                     switch (error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = CONFIG.MESSAGES.LOCATION_DENIED;
+                            errorMessage = window.CONFIG.MESSAGES.LOCATION_DENIED;
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = CONFIG.MESSAGES.LOCATION_UNAVAILABLE;
+                            errorMessage = window.CONFIG.MESSAGES.LOCATION_UNAVAILABLE;
                             break;
                         case error.TIMEOUT:
-                            errorMessage = CONFIG.MESSAGES.LOCATION_TIMEOUT;
+                            errorMessage = window.CONFIG.MESSAGES.LOCATION_TIMEOUT;
                             break;
                     }
                     

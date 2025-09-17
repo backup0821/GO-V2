@@ -175,7 +175,4 @@ if (typeof import !== 'undefined' && import.meta && import.meta.env) {
 // 全域配置物件
 window.CONFIG = CONFIG;
 
-// 匯出配置 (如果使用模組系統)
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = CONFIG;
-}
+// 全域配置物件已設定為 window.CONFIG
