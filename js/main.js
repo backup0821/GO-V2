@@ -101,7 +101,7 @@ class App {
         // 視窗滾動事件
         window.addEventListener('scroll', Utils.throttle(() => {
             this.onWindowScroll();
-        }, CONFIG.PERFORMANCE.THROTTLE_DELAY));
+        }, window.CONFIG.PERFORMANCE.THROTTLE_DELAY));
 
         // 鍵盤事件
         document.addEventListener('keydown', (e) => {

@@ -497,7 +497,7 @@ class MapService {
     setMapZoom(zoom) {
         if (!this.map) return;
         
-        const clampedZoom = Math.max(CONFIG.MAPS.MIN_ZOOM, Math.min(CONFIG.MAPS.MAX_ZOOM, zoom));
+        const clampedZoom = Math.max(window.CONFIG.MAPS.MIN_ZOOM, Math.min(window.CONFIG.MAPS.MAX_ZOOM, zoom));
         this.map.setZoom(clampedZoom);
     }
 

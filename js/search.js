@@ -48,7 +48,7 @@ class SearchService {
             // 防抖搜尋
             const debouncedSearch = Utils.debounce((query) => {
                 this.performSearch(query);
-            }, CONFIG.PERFORMANCE.DEBOUNCE_DELAY);
+            }, window.CONFIG.PERFORMANCE.DEBOUNCE_DELAY);
 
             input.addEventListener('input', (e) => {
                 debouncedSearch(e.target.value);
@@ -201,7 +201,7 @@ class SearchService {
                 filters: this.currentFilters,
                 sortBy: this.currentSortBy,
                 location: this.userLocation,
-                limit: CONFIG.SEARCH.DEFAULT_LIMIT,
+                limit: window.CONFIG.SEARCH.DEFAULT_LIMIT,
                 page: 1
             };
 
@@ -214,7 +214,7 @@ class SearchService {
 
         } catch (error) {
             console.error('搜尋失敗:', error);
-            Utils.showMessage(CONFIG.MESSAGES.SEARCH_ERROR, 'error');
+            Utils.showMessage(window.CONFIG.MESSAGES.SEARCH_ERROR, 'error');
             this.showNoResults();
         } finally {
             this.isSearching = false;
@@ -255,7 +255,7 @@ class SearchService {
                 location: location,
                 filters: this.currentFilters,
                 sortBy: 'distance',
-                limit: CONFIG.SEARCH.DEFAULT_LIMIT,
+                limit: window.CONFIG.SEARCH.DEFAULT_LIMIT,
                 page: 1
             };
 
@@ -284,7 +284,7 @@ class SearchService {
             const result = await API.service.searchNearbyToilets({
                 filters: this.currentFilters,
                 sortBy: this.currentSortBy,
-                limit: CONFIG.SEARCH.DEFAULT_LIMIT,
+                limit: window.CONFIG.SEARCH.DEFAULT_LIMIT,
                 page: 1
             });
 
@@ -299,7 +299,7 @@ class SearchService {
 
         } catch (error) {
             console.error('瀏覽廁所失敗:', error);
-            Utils.showMessage(CONFIG.MESSAGES.SEARCH_ERROR, 'error');
+            Utils.showMessage(window.CONFIG.MESSAGES.SEARCH_ERROR, 'error');
         } finally {
             this.showLoading(false);
         }
@@ -440,7 +440,7 @@ class SearchService {
             }
         } catch (error) {
             console.error('取得廁所詳情失敗:', error);
-            Utils.showMessage(CONFIG.MESSAGES.API_ERROR, 'error');
+            Utils.showMessage(window.CONFIG.MESSAGES.API_ERROR, 'error');
         }
     }
 
