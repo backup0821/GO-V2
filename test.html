@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試頁面 - 無障礙廁所GO V2</title>
+    <style>
+        body {
+            font-family: 'Noto Sans TC', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            border-left: 4px solid #1976d2;
+            background-color: #f8f9fa;
+        }
+        .success {
+            border-left-color: #4caf50;
+            background-color: #e8f5e8;
+        }
+        .error {
+            border-left-color: #f44336;
+            background-color: #ffebee;
+        }
+        .warning {
+            border-left-color: #ff9800;
+            background-color: #fff3e0;
+        }
+        button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 無障礙廁所GO V2 - 測試頁面</h1>
+        
+        <div class="test-item" id="config-test">
+            <h3>配置載入測試</h3>
+            <p>檢查 CONFIG 物件是否正確載入...</p>
+        </div>
+        
+        <div class="test-item" id="api-test">
+            <h3>API 服務測試</h3>
+            <p>檢查 API 服務是否正常初始化...</p>
+        </div>
+        
+        <div class="test-item" id="utils-test">
+            <h3>工具函數測試</h3>
+            <p>檢查工具函數是否正常工作...</p>
+        </div>
+        
+        <div class="test-item" id="accessibility-test">
+            <h3>無障礙服務測試</h3>
+            <p>檢查無障礙服務是否正常初始化...</p>
+        </div>
+        
+        <div class="test-item" id="navigation-test">
+            <h3>導航服務測試</h3>
+            <p>檢查導航服務是否正常初始化...</p>
+        </div>
+        
+        <div class="test-item" id="search-test">
+            <h3>搜尋服務測試</h3>
+            <p>檢查搜尋服務是否正常初始化...</p>
+        </div>
+        
+        <div class="test-item" id="map-test">
+            <h3>地圖服務測試</h3>
+            <p>檢查地圖服務是否正常初始化...</p>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="runAllTests()">🧪 執行所有測試</button>
+            <button onclick="window.location.href='index.html'">🏠 返回主頁</button>
+        </div>
+        
+        <div id="test-results" style="margin-top: 20px;"></div>
+    </div>
+
+    <!-- 載入 JavaScript 檔案 -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/map.js"></script>
+    
+    <script>
+        function updateTestResult(testId, status, message) {
+            const element = document.getElementById(testId);
+            element.className = `test-item ${status}`;
+            element.querySelector('p').textContent = message;
+        }
+        
+        function runAllTests() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<h3>測試結果：</h3>';
+            
+            // 測試 CONFIG
+            try {
+                if (window.CONFIG && window.CONFIG.API) {
+                    updateTestResult('config-test', 'success', '✅ CONFIG 物件載入成功');
+                    results.innerHTML += '<p>✅ CONFIG 載入正常</p>';
+                } else {
+                    throw new Error('CONFIG 未定義');
+                }
+            } catch (error) {
+                updateTestResult('config-test', 'error', `❌ CONFIG 載入失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ CONFIG 載入失敗: ${error.message}</p>`;
+            }
+            
+            // 測試 API 服務
+            try {
+                if (window.API && window.API.service) {
+                    updateTestResult('api-test', 'success', '✅ API 服務初始化成功');
+                    results.innerHTML += '<p>✅ API 服務正常</p>';
+                } else {
+                    throw new Error('API 服務未定義');
+                }
+            } catch (error) {
+                updateTestResult('api-test', 'error', `❌ API 服務初始化失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ API 服務失敗: ${error.message}</p>`;
+            }
+            
+            // 測試工具函數
+            try {
+                if (window.Utils && typeof window.Utils.formatNumber === 'function') {
+                    const testResult = window.Utils.formatNumber(1234);
+                    if (testResult === '1,234') {
+                        updateTestResult('utils-test', 'success', '✅ 工具函數工作正常');
+                        results.innerHTML += '<p>✅ 工具函數正常</p>';
+                    } else {
+                        throw new Error('工具函數返回錯誤結果');
+                    }
+                } else {
+                    throw new Error('Utils 未定義或函數不存在');
+                }
+            } catch (error) {
+                updateTestResult('utils-test', 'error', `❌ 工具函數測試失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ 工具函數失敗: ${error.message}</p>`;
+            }
+            
+            // 測試無障礙服務
+            try {
+                if (window.AccessibilityService && typeof window.AccessibilityService.initialize === 'function') {
+                    updateTestResult('accessibility-test', 'success', '✅ 無障礙服務可用');
+                    results.innerHTML += '<p>✅ 無障礙服務正常</p>';
+                } else {
+                    throw new Error('AccessibilityService 未定義');
+                }
+            } catch (error) {
+                updateTestResult('accessibility-test', 'error', `❌ 無障礙服務測試失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ 無障礙服務失敗: ${error.message}</p>`;
+            }
+            
+            // 測試導航服務
+            try {
+                if (window.NavigationService && typeof window.NavigationService.initialize === 'function') {
+                    updateTestResult('navigation-test', 'success', '✅ 導航服務可用');
+                    results.innerHTML += '<p>✅ 導航服務正常</p>';
+                } else {
+                    throw new Error('NavigationService 未定義');
+                }
+            } catch (error) {
+                updateTestResult('navigation-test', 'error', `❌ 導航服務測試失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ 導航服務失敗: ${error.message}</p>`;
+            }
+            
+            // 測試搜尋服務
+            try {
+                if (window.SearchService && typeof window.SearchService.initialize === 'function') {
+                    updateTestResult('search-test', 'success', '✅ 搜尋服務可用');
+                    results.innerHTML += '<p>✅ 搜尋服務正常</p>';
+                } else {
+                    throw new Error('SearchService 未定義');
+                }
+            } catch (error) {
+                updateTestResult('search-test', 'error', `❌ 搜尋服務測試失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ 搜尋服務失敗: ${error.message}</p>`;
+            }
+            
+            // 測試地圖服務
+            try {
+                if (window.MapService && typeof window.MapService.initializeMap === 'function') {
+                    updateTestResult('map-test', 'warning', '⚠️ 地圖服務可用（需要 Google Maps API Key）');
+                    results.innerHTML += '<p>⚠️ 地圖服務可用（需要 Google Maps API Key）</p>';
+                } else {
+                    throw new Error('MapService 未定義');
+                }
+            } catch (error) {
+                updateTestResult('map-test', 'error', `❌ 地圖服務測試失敗: ${error.message}`);
+                results.innerHTML += `<p>❌ 地圖服務失敗: ${error.message}</p>`;
+            }
+            
+            results.innerHTML += '<p><strong>測試完成！</strong></p>';
+        }
+        
+        // 頁面載入時自動執行測試
+        window.addEventListener('load', () => {
+            setTimeout(runAllTests, 1000);
+        });
+    </script>
+</body>
+</html>
