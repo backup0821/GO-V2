@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="無障礙廁所GO V2 - 系統維護中">
+    <title>系統維護中 - 無障礙廁所GO V2</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', 'Microsoft JhengHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow: hidden;
+        }
+        
+        .maintenance-container {
+            text-align: center;
+            max-width: 600px;
+            padding: 40px 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideInUp 1s ease-out;
+        }
+        
+        .maintenance-icon {
+            font-size: 8rem;
+            margin-bottom: 30px;
+            color: #ff9800;
+            animation: pulse 2s infinite;
+        }
+        
+        .maintenance-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .maintenance-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .maintenance-description {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            margin-bottom: 40px;
+            opacity: 0.8;
+        }
+        
+        .maintenance-status {
+            display: inline-block;
+            background: rgba(255, 152, 0, 0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 2px solid #ff9800;
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        .maintenance-time {
+            font-size: 1rem;
+            opacity: 0.7;
+            margin-bottom: 20px;
+        }
+        
+        .contact-info {
+            font-size: 0.9rem;
+            opacity: 0.6;
+            margin-top: 30px;
+        }
+        
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+        }
+        
+        .shape {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 20%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 60%;
+            right: 10%;
+            animation-delay: 2s;
+        }
+        
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+        
+        .shape:nth-child(4) {
+            width: 100px;
+            height: 100px;
+            top: 30%;
+            right: 30%;
+            animation-delay: 1s;
+        }
+        
+        .shape:nth-child(5) {
+            width: 40px;
+            height: 40px;
+            bottom: 40%;
+            right: 20%;
+            animation-delay: 3s;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 20px rgba(255, 152, 0, 0.3);
+            }
+            to {
+                box-shadow: 0 0 30px rgba(255, 152, 0, 0.6);
+            }
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+            50% {
+                transform: translateY(-20px) rotate(180deg);
+            }
+        }
+        
+        /* 響應式設計 */
+        @media (max-width: 768px) {
+            .maintenance-container {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+            
+            .maintenance-icon {
+                font-size: 6rem;
+            }
+            
+            .maintenance-title {
+                font-size: 2.5rem;
+            }
+            
+            .maintenance-subtitle {
+                font-size: 1.2rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .maintenance-container {
+                margin: 10px;
+                padding: 20px 15px;
+            }
+            
+            .maintenance-icon {
+                font-size: 5rem;
+            }
+            
+            .maintenance-title {
+                font-size: 2rem;
+            }
+            
+            .maintenance-subtitle {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 浮動形狀背景 -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <!-- 維護頁面內容 -->
+    <div class="maintenance-container">
+        <div class="maintenance-icon">
+            <i class="fas fa-tools"></i>
+        </div>
+        
+        <h1 class="maintenance-title">系統維護中</h1>
+        
+        <p class="maintenance-subtitle">無障礙廁所GO V2</p>
+        
+        <div class="maintenance-status">
+            <i class="fas fa-cog fa-spin"></i> 維護進行中
+        </div>
+        
+        <p class="maintenance-description">
+            我們正在進行系統升級和維護工作，<br>
+            以提供更好的服務品質。<br>
+            感謝您的耐心等待！
+        </p>
+        
+        <div class="maintenance-time">
+            <i class="fas fa-clock"></i> 
+            預計維護時間：30分鐘 - 1小時
+        </div>
+        
+        <div class="contact-info">
+            如有緊急需求，請聯絡：contact@lkjh-maker.com
+        </div>
+    </div>
+    
+    <script>
+        // 顯示維護開始時間
+        const startTime = new Date();
+        const timeElement = document.querySelector('.maintenance-time');
+        
+        function updateTime() {
+            const now = new Date();
+            const duration = now - startTime;
+            const minutes = Math.floor(duration / 60000);
+            const seconds = Math.floor((duration % 60000) / 1000);
+            
+            timeElement.innerHTML = `
+                <i class="fas fa-clock"></i> 
+                維護開始時間：${startTime.toLocaleTimeString('zh-TW')}<br>
+                已維護：${minutes}分${seconds}秒
+            `;
+        }
+        
+        // 每秒更新時間
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // 檢查維護狀態
+        function checkMaintenanceStatus() {
+            fetch('maintenance-status.json')
+                .then(response => {
+                    if (response.ok) {
+                        response.json().then(data => {
+                            if (data.maintenance === false) {
+                                // 維護結束，重新導向到主頁
+                                window.location.href = 'index.html';
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    // 如果無法檢查狀態，繼續顯示維護頁面
+                    console.log('維護狀態檢查失敗:', error);
+                });
+        }
+        
+        // 每30秒檢查一次維護狀態
+        setInterval(checkMaintenanceStatus, 30000);
+        
+        // 頁面載入時檢查一次
+        checkMaintenanceStatus();
+    </script>
+</body>
+</html>
