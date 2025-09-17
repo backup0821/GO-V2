@@ -25,9 +25,9 @@ class MapService {
                 throw new Error('Google Maps API 未載入');
             }
 
-            const defaultOptions = {
-                zoom: CONFIG.MAPS.DEFAULT_ZOOM,
-                center: CONFIG.MAPS.DEFAULT_CENTER,
+        const defaultOptions = {
+            zoom: window.CONFIG.MAPS.DEFAULT_ZOOM,
+            center: window.CONFIG.MAPS.DEFAULT_CENTER,
                 mapTypeId: google.maps.MapTypeId.ROADMAP,
                 styles: this.getMapStyles(),
                 gestureHandling: 'cooperative',
@@ -59,7 +59,7 @@ class MapService {
             return this.map;
         } catch (error) {
             console.error('地圖初始化失敗:', error);
-            throw new Error(CONFIG.MESSAGES.MAPS_ERROR);
+            throw new Error(window.CONFIG.MESSAGES.MAPS_ERROR);
         }
     }
 
@@ -156,12 +156,12 @@ class MapService {
             map: this.map,
             title: '我的位置',
             icon: {
-                path: CONFIG.MAP_MARKERS.USER_LOCATION.path,
-                fillColor: CONFIG.MAP_MARKERS.USER_LOCATION.fillColor,
-                fillOpacity: CONFIG.MAP_MARKERS.USER_LOCATION.fillOpacity,
-                strokeColor: CONFIG.MAP_MARKERS.USER_LOCATION.strokeColor,
-                strokeWeight: CONFIG.MAP_MARKERS.USER_LOCATION.strokeWeight,
-                scale: CONFIG.MAP_MARKERS.USER_LOCATION.scale,
+                path: window.CONFIG.MAP_MARKERS.USER_LOCATION.path,
+                fillColor: window.CONFIG.MAP_MARKERS.USER_LOCATION.fillColor,
+                fillOpacity: window.CONFIG.MAP_MARKERS.USER_LOCATION.fillOpacity,
+                strokeColor: window.CONFIG.MAP_MARKERS.USER_LOCATION.strokeColor,
+                strokeWeight: window.CONFIG.MAP_MARKERS.USER_LOCATION.strokeWeight,
+                scale: window.CONFIG.MAP_MARKERS.USER_LOCATION.scale,
                 anchor: new google.maps.Point(12, 12)
             },
             animation: google.maps.Animation.BOUNCE,
@@ -171,7 +171,7 @@ class MapService {
         this.userLocation = location;
 
         // 設定地圖中心到使用者位置
-        this.setMapCenter(position, CONFIG.MAPS.DEFAULT_ZOOM);
+        this.setMapCenter(position, window.CONFIG.MAPS.DEFAULT_ZOOM);
 
         // 停止動畫
         setTimeout(() => {
@@ -226,12 +226,12 @@ class MapService {
         const isAccessible = toilet.type === '無障礙廁所';
         
         return {
-            path: CONFIG.MAP_MARKERS.TOILET.path,
+            path: window.CONFIG.MAP_MARKERS.TOILET.path,
             fillColor: color,
-            fillOpacity: CONFIG.MAP_MARKERS.TOILET.fillOpacity,
-            strokeColor: CONFIG.MAP_MARKERS.TOILET.strokeColor,
-            strokeWeight: CONFIG.MAP_MARKERS.TOILET.strokeWeight,
-            scale: isAccessible ? CONFIG.MAP_MARKERS.TOILET.scale + 0.2 : CONFIG.MAP_MARKERS.TOILET.scale,
+            fillOpacity: window.CONFIG.MAP_MARKERS.TOILET.fillOpacity,
+            strokeColor: window.CONFIG.MAP_MARKERS.TOILET.strokeColor,
+            strokeWeight: window.CONFIG.MAP_MARKERS.TOILET.strokeWeight,
+            scale: isAccessible ? window.CONFIG.MAP_MARKERS.TOILET.scale + 0.2 : window.CONFIG.MAP_MARKERS.TOILET.scale,
             anchor: new google.maps.Point(12, 12)
         };
     }
@@ -416,8 +416,8 @@ class MapService {
         
         // 確保縮放級別不會太小
         const listener = google.maps.event.addListener(this.map, 'idle', () => {
-            if (this.map.getZoom() > CONFIG.MAPS.MAX_ZOOM) {
-                this.map.setZoom(CONFIG.MAPS.MAX_ZOOM);
+            if (this.map.getZoom() > window.CONFIG.MAPS.MAX_ZOOM) {
+                this.map.setZoom(window.CONFIG.MAPS.MAX_ZOOM);
             }
             google.maps.event.removeListener(listener);
         });
@@ -429,7 +429,7 @@ class MapService {
      * @param {Object} filters - 篩選條件
      * @param {number} radius - 搜尋半徑
      */
-    async searchAndShowNearbyToilets(location, filters = {}, radius = CONFIG.SEARCH.DEFAULT_RADIUS) {
+    async searchAndShowNearbyToilets(location, filters = {}, radius = window.CONFIG.SEARCH.DEFAULT_RADIUS) {
         try {
             const searchParams = {
                 location: location,
@@ -447,7 +447,7 @@ class MapService {
             return nearbyToilets;
         } catch (error) {
             console.error('搜尋附近廁所失敗:', error);
-            Utils.showMessage(CONFIG.MESSAGES.SEARCH_ERROR, 'error');
+            Utils.showMessage(window.CONFIG.MESSAGES.SEARCH_ERROR, 'error');
         }
     }
 
