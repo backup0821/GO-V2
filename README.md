@@ -41,8 +41,8 @@
 
 1. **複製專案**
 ```bash
-git clone https://github.com/lkjh-maker/accessible-toilet-go-v2.git
-cd accessible-toilet-go-v2
+git clone https://github.com/YOUR_USERNAME/無障礙廁所GO-V2.git
+cd 無障礙廁所GO-V2
 ```
 
 2. **安裝依賴**
@@ -53,23 +53,42 @@ npm run setup
 3. **設定環境變數**
 ```bash
 # 複製環境變數範本
-cp backend/.env.example backend/.env
-cp frontend/.env.example frontend/.env
+cp frontend/env.example frontend/.env
 
-# 編輯環境變數檔案，填入必要的API金鑰和資料庫設定
+# 編輯環境變數檔案，填入Google Maps API金鑰
+# 需要申請 Google Maps API Key 並啟用 Maps JavaScript API
 ```
 
-4. **初始化資料庫**
+4. **啟動開發伺服器**
 ```bash
-cd backend
-npx prisma migrate dev
-npx prisma db seed
+npm run dev:frontend
 ```
 
-5. **啟動開發伺服器**
-```bash
-npm run dev
-```
+5. **開啟瀏覽器**
+訪問 http://localhost:3000
+
+## 🌐 GitHub Pages 部署
+
+本專案已配置自動部署到 GitHub Pages：
+
+### 部署步驟
+
+1. **Fork 或 Clone 專案到您的 GitHub 帳號**
+2. **設定 GitHub Pages**：
+   - 前往儲存庫 Settings → Pages
+   - Source 選擇 "GitHub Actions"
+3. **設定 Secrets**：
+   - 前往 Settings → Secrets and variables → Actions
+   - 新增 `VITE_GOOGLE_MAPS_API_KEY` secret
+4. **推送程式碼**：
+   ```bash
+   git push origin main
+   ```
+5. **自動部署**：
+   - GitHub Actions 會自動建置並部署網站
+   - 部署完成後可訪問：`https://YOUR_USERNAME.github.io/無障礙廁所GO-V2/`
+
+詳細部署說明請參考：[GitHub 部署指南](docs/GITHUB_DEPLOYMENT.md)
 
 ## 專案結構
 
