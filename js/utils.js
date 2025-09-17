@@ -146,7 +146,7 @@ function getToiletTypeColor(type) {
  * @returns {string} 顏色代碼
  */
 function getToiletGradeColor(grade) {
-    return CONFIG.TOILET_GRADES[grade]?.color || '#757575';
+    return window.CONFIG.TOILET_GRADES[grade]?.color || '#757575';
 }
 
 /**
@@ -155,7 +155,7 @@ function getToiletGradeColor(grade) {
  * @returns {number} 星星數量
  */
 function getToiletGradeStars(grade) {
-    return CONFIG.TOILET_GRADES[grade]?.stars || 0;
+    return window.CONFIG.TOILET_GRADES[grade]?.stars || 0;
 }
 
 /**
@@ -185,8 +185,8 @@ function sortToilets(toilets, sortBy = 'distance', userLocation = null) {
             
         case 'grade':
             return sortedToilets.sort((a, b) => {
-                const aPriority = CONFIG.TOILET_GRADES[a.grade]?.priority || 999;
-                const bPriority = CONFIG.TOILET_GRADES[b.grade]?.priority || 999;
+                const aPriority = window.CONFIG.TOILET_GRADES[a.grade]?.priority || 999;
+                const bPriority = window.CONFIG.TOILET_GRADES[b.grade]?.priority || 999;
                 return aPriority - bPriority;
             });
             
