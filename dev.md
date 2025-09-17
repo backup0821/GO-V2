@@ -233,11 +233,11 @@
 ## 部署與維護
 
 ### 部署環境
-- **前端**: Vercel/Netlify (CDN加速)
-- **後端**: AWS EC2/DigitalOcean
-- **資料庫**: AWS RDS PostgreSQL
-- **快取**: Redis Cloud
-- **監控**: Sentry (錯誤追蹤)
+- **前端**: GitHub Pages (免費託管)
+- **後端**: GitHub Actions + Vercel/Railway (免費方案)
+- **資料庫**: Supabase/PlanetScale (免費方案)
+- **快取**: Upstash Redis (免費方案)
+- **監控**: GitHub Issues + Sentry (免費方案)
 
 ### 維護計劃
 - 定期更新廁所資料
