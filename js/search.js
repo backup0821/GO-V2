@@ -721,10 +721,7 @@ window.toggleFavorite = (toiletId) => {
 };
 
 window.navigateToToilet = (toiletId) => {
-    const toilet = searchService.currentResults.find(t => t.id === toiletId);
-    if (toilet) {
-        MapService.navigateToToilet(toilet);
-    }
+    Utils.showMessage('導航功能維護中，請稍後再試', 'warning');
 };
 
 window.copyToiletInfo = async (toiletId) => {

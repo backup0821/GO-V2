@@ -436,18 +436,13 @@ class NavigationService {
             
             const location = await API.location.getCurrentPosition();
             
-            // 在地圖上顯示位置
-            if (window.MapService && window.MapService.isInitialized) {
-                window.MapService.addUserLocationMarker(location);
-            }
-            
-            // 搜尋附近廁所
+            // 搜尋附近廁所（不使用地圖功能）
             const nearbyToilets = await API.service.searchNearbyToilets({
                 location: location,
                 limit: 20
             });
             
-            Utils.showMessage('位置資訊已取得', 'success');
+            Utils.showMessage('位置資訊已取得（地圖功能維護中）', 'success');
             
             // 切換到搜尋頁面並顯示結果
             this.navigateToPage('search');
