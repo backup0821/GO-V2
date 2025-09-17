@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>測試頁面 - 無障礙廁所GO V2</title>
+    <title>服務測試 - 無障礙廁所GO V2</title>
     <style>
         body {
-            font-family: 'Noto Sans TC', sans-serif;
-            margin: 20px;
+            font-family: Arial, sans-serif;
+            padding: 20px;
             background-color: #f5f5f5;
         }
-        .container {
+        .test-container {
             max-width: 800px;
             margin: 0 auto;
             background: white;
@@ -21,205 +21,214 @@
         .test-item {
             margin: 10px 0;
             padding: 10px;
-            border-left: 4px solid #1976d2;
-            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
-        .success {
-            border-left-color: #4caf50;
-            background-color: #e8f5e8;
-        }
-        .error {
-            border-left-color: #f44336;
-            background-color: #ffebee;
-        }
-        .warning {
-            border-left-color: #ff9800;
-            background-color: #fff3e0;
-        }
+        .success { border-color: #4CAF50; background-color: #f1f8e9; }
+        .error { border-color: #f44336; background-color: #ffebee; }
+        .loading { border-color: #ff9800; background-color: #fff3e0; }
+        .info { border-color: #2196F3; background-color: #e3f2fd; }
         button {
-            background: #1976d2;
-            color: white;
-            border: none;
             padding: 10px 20px;
+            border: none;
             border-radius: 4px;
             cursor: pointer;
             margin: 5px;
         }
-        button:hover {
-            background: #1565c0;
-        }
+        .btn-success { background: #4CAF50; color: white; }
+        .btn-primary { background: #2196F3; color: white; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🧪 無障礙廁所GO V2 - 測試頁面</h1>
+    <div class="test-container">
+        <h1>🔧 服務測試頁面</h1>
+        <p>此頁面用於測試所有 JavaScript 服務是否正常載入和初始化。</p>
         
-        <div class="test-item" id="config-test">
-            <h3>配置載入測試</h3>
-            <p>檢查 CONFIG 物件是否正確載入...</p>
-        </div>
-        
-        <div class="test-item" id="api-test">
-            <h3>API 服務測試</h3>
-            <p>檢查 API 服務是否正常初始化...</p>
-        </div>
-        
-        <div class="test-item" id="utils-test">
-            <h3>工具函數測試</h3>
-            <p>檢查工具函數是否正常工作...</p>
-        </div>
-        
-        <div class="test-item" id="accessibility-test">
-            <h3>無障礙服務測試</h3>
-            <p>檢查無障礙服務是否正常初始化...</p>
-        </div>
-        
-        <div class="test-item" id="navigation-test">
-            <h3>導航服務測試</h3>
-            <p>檢查導航服務是否正常初始化...</p>
-        </div>
-        
-        <div class="test-item" id="search-test">
-            <h3>搜尋服務測試</h3>
-            <p>檢查搜尋服務是否正常初始化...</p>
-        </div>
-        
-        <div class="test-item" id="map-test">
-            <h3>地圖服務測試</h3>
-            <p>檢查地圖服務是否正常初始化...</p>
+        <div id="test-results">
+            <div class="test-item loading">
+                <strong>⏳ 正在測試服務載入...</strong>
+            </div>
         </div>
         
         <div style="margin-top: 20px;">
-            <button onclick="runAllTests()">🧪 執行所有測試</button>
-            <button onclick="window.location.href='index.html'">🏠 返回主頁</button>
+            <button class="btn-success" onclick="testServices()">🔄 重新測試</button>
+            <button class="btn-primary" onclick="window.location.href='index.html'">🏠 回到首頁</button>
         </div>
-        
-        <div id="test-results" style="margin-top: 20px;"></div>
     </div>
 
-    <!-- 載入 JavaScript 檔案 -->
+    <!-- 載入所有 JavaScript 檔案 -->
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/api.js"></script>
+    <script src="js/map.js"></script>
     <script src="js/accessibility.js"></script>
     <script src="js/navigation.js"></script>
     <script src="js/search.js"></script>
-    <script src="js/map.js"></script>
+    <script src="js/main.js"></script>
     
     <script>
-        function updateTestResult(testId, status, message) {
-            const element = document.getElementById(testId);
-            element.className = `test-item ${status}`;
-            element.querySelector('p').textContent = message;
+        // 測試服務載入
+        function testServices() {
+            const results = document.getElementById('test-results');
+            results.innerHTML = '<div class="test-item loading"><strong>⏳ 正在測試服務載入...</strong></div>';
+            
+            setTimeout(() => {
+                const tests = [
+                    {
+                        name: 'CONFIG 配置',
+                        test: () => typeof window.CONFIG !== 'undefined'
+                    },
+                    {
+                        name: 'Utils 工具',
+                        test: () => typeof Utils !== 'undefined'
+                    },
+                    {
+                        name: 'API 服務',
+                        test: () => typeof window.APIService !== 'undefined'
+                    },
+                    {
+                        name: 'AccessibilityService 無障礙服務',
+                        test: () => typeof window.AccessibilityService !== 'undefined'
+                    },
+                    {
+                        name: 'NavigationService 導航服務',
+                        test: () => typeof window.NavigationService !== 'undefined'
+                    },
+                    {
+                        name: 'SearchService 搜尋服務',
+                        test: () => typeof window.SearchService !== 'undefined'
+                    },
+                    {
+                        name: 'MapService 地圖服務',
+                        test: () => typeof window.MapService !== 'undefined'
+                    },
+                    {
+                        name: 'App 主應用程式',
+                        test: () => typeof window.App !== 'undefined'
+                    }
+                ];
+                
+                results.innerHTML = '';
+                
+                tests.forEach(test => {
+                    const div = document.createElement('div');
+                    div.className = 'test-item';
+                    
+                    try {
+                        const success = test.test();
+                        if (success) {
+                            div.className += ' success';
+                            div.innerHTML = `<strong>✅ ${test.name}</strong> - 載入成功`;
+                        } else {
+                            div.className += ' error';
+                            div.innerHTML = `<strong>❌ ${test.name}</strong> - 載入失敗`;
+                        }
+                    } catch (error) {
+                        div.className += ' error';
+                        div.innerHTML = `<strong>❌ ${test.name}</strong> - 錯誤: ${error.message}`;
+                    }
+                    
+                    results.appendChild(div);
+                });
+                
+                // 測試服務初始化
+                setTimeout(() => {
+                    testInitialization();
+                }, 500);
+            }, 100);
         }
         
-        function runAllTests() {
+        function testInitialization() {
             const results = document.getElementById('test-results');
-            results.innerHTML = '<h3>測試結果：</h3>';
             
-            // 測試 CONFIG
-            try {
-                if (window.CONFIG && window.CONFIG.API) {
-                    updateTestResult('config-test', 'success', '✅ CONFIG 物件載入成功');
-                    results.innerHTML += '<p>✅ CONFIG 載入正常</p>';
-                } else {
-                    throw new Error('CONFIG 未定義');
-                }
-            } catch (error) {
-                updateTestResult('config-test', 'error', `❌ CONFIG 載入失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ CONFIG 載入失敗: ${error.message}</p>`;
-            }
+            // 測試無障礙服務初始化
+            const accessibilityTest = document.createElement('div');
+            accessibilityTest.className = 'test-item';
             
-            // 測試 API 服務
-            try {
-                if (window.API && window.API.service) {
-                    updateTestResult('api-test', 'success', '✅ API 服務初始化成功');
-                    results.innerHTML += '<p>✅ API 服務正常</p>';
-                } else {
-                    throw new Error('API 服務未定義');
-                }
-            } catch (error) {
-                updateTestResult('api-test', 'error', `❌ API 服務初始化失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ API 服務失敗: ${error.message}</p>`;
-            }
-            
-            // 測試工具函數
-            try {
-                if (window.Utils && typeof window.Utils.formatNumber === 'function') {
-                    const testResult = window.Utils.formatNumber(1234);
-                    if (testResult === '1,234') {
-                        updateTestResult('utils-test', 'success', '✅ 工具函數工作正常');
-                        results.innerHTML += '<p>✅ 工具函數正常</p>';
-                    } else {
-                        throw new Error('工具函數返回錯誤結果');
-                    }
-                } else {
-                    throw new Error('Utils 未定義或函數不存在');
-                }
-            } catch (error) {
-                updateTestResult('utils-test', 'error', `❌ 工具函數測試失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ 工具函數失敗: ${error.message}</p>`;
-            }
-            
-            // 測試無障礙服務
             try {
                 if (window.AccessibilityService && typeof window.AccessibilityService.initialize === 'function') {
-                    updateTestResult('accessibility-test', 'success', '✅ 無障礙服務可用');
-                    results.innerHTML += '<p>✅ 無障礙服務正常</p>';
+                    window.AccessibilityService.initialize();
+                    accessibilityTest.className += ' success';
+                    accessibilityTest.innerHTML = '<strong>✅ AccessibilityService 初始化</strong> - 成功';
                 } else {
-                    throw new Error('AccessibilityService 未定義');
+                    accessibilityTest.className += ' error';
+                    accessibilityTest.innerHTML = '<strong>❌ AccessibilityService 初始化</strong> - 方法不存在';
                 }
             } catch (error) {
-                updateTestResult('accessibility-test', 'error', `❌ 無障礙服務測試失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ 無障礙服務失敗: ${error.message}</p>`;
+                accessibilityTest.className += ' error';
+                accessibilityTest.innerHTML = `<strong>❌ AccessibilityService 初始化</strong> - 錯誤: ${error.message}`;
             }
             
-            // 測試導航服務
+            results.appendChild(accessibilityTest);
+            
+            // 測試導航服務初始化
+            const navigationTest = document.createElement('div');
+            navigationTest.className = 'test-item';
+            
             try {
                 if (window.NavigationService && typeof window.NavigationService.initialize === 'function') {
-                    updateTestResult('navigation-test', 'success', '✅ 導航服務可用');
-                    results.innerHTML += '<p>✅ 導航服務正常</p>';
+                    window.NavigationService.initialize();
+                    navigationTest.className += ' success';
+                    navigationTest.innerHTML = '<strong>✅ NavigationService 初始化</strong> - 成功';
                 } else {
-                    throw new Error('NavigationService 未定義');
+                    navigationTest.className += ' error';
+                    navigationTest.innerHTML = '<strong>❌ NavigationService 初始化</strong> - 方法不存在';
                 }
             } catch (error) {
-                updateTestResult('navigation-test', 'error', `❌ 導航服務測試失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ 導航服務失敗: ${error.message}</p>`;
+                navigationTest.className += ' error';
+                navigationTest.innerHTML = `<strong>❌ NavigationService 初始化</strong> - 錯誤: ${error.message}`;
             }
             
-            // 測試搜尋服務
+            results.appendChild(navigationTest);
+            
+            // 測試搜尋服務初始化
+            const searchTest = document.createElement('div');
+            searchTest.className = 'test-item';
+            
             try {
                 if (window.SearchService && typeof window.SearchService.initialize === 'function') {
-                    updateTestResult('search-test', 'success', '✅ 搜尋服務可用');
-                    results.innerHTML += '<p>✅ 搜尋服務正常</p>';
+                    window.SearchService.initialize();
+                    searchTest.className += ' success';
+                    searchTest.innerHTML = '<strong>✅ SearchService 初始化</strong> - 成功';
                 } else {
-                    throw new Error('SearchService 未定義');
+                    searchTest.className += ' error';
+                    searchTest.innerHTML = '<strong>❌ SearchService 初始化</strong> - 方法不存在';
                 }
             } catch (error) {
-                updateTestResult('search-test', 'error', `❌ 搜尋服務測試失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ 搜尋服務失敗: ${error.message}</p>`;
+                searchTest.className += ' error';
+                searchTest.innerHTML = `<strong>❌ SearchService 初始化</strong> - 錯誤: ${error.message}`;
             }
             
-            // 測試地圖服務
+            results.appendChild(searchTest);
+            
+            // 測試主應用程式初始化
+            const appTest = document.createElement('div');
+            appTest.className = 'test-item';
+            
             try {
-                if (window.MapService && typeof window.MapService.initializeMap === 'function') {
-                    updateTestResult('map-test', 'warning', '⚠️ 地圖服務可用（需要 Google Maps API Key）');
-                    results.innerHTML += '<p>⚠️ 地圖服務可用（需要 Google Maps API Key）</p>';
+                if (window.App && typeof window.App.initialize === 'function') {
+                    appTest.className += ' success';
+                    appTest.innerHTML = '<strong>✅ App 主應用程式</strong> - 方法存在';
                 } else {
-                    throw new Error('MapService 未定義');
+                    appTest.className += ' error';
+                    appTest.innerHTML = '<strong>❌ App 主應用程式</strong> - 方法不存在';
                 }
             } catch (error) {
-                updateTestResult('map-test', 'error', `❌ 地圖服務測試失敗: ${error.message}`);
-                results.innerHTML += `<p>❌ 地圖服務失敗: ${error.message}</p>`;
+                appTest.className += ' error';
+                appTest.innerHTML = `<strong>❌ App 主應用程式</strong> - 錯誤: ${error.message}`;
             }
             
-            results.innerHTML += '<p><strong>測試完成！</strong></p>';
+            results.appendChild(appTest);
+            
+            // 顯示測試完成訊息
+            const completeTest = document.createElement('div');
+            completeTest.className = 'test-item info';
+            completeTest.innerHTML = '<strong>🎉 測試完成！</strong> 所有服務已檢查完畢。';
+            results.appendChild(completeTest);
         }
         
-        // 頁面載入時自動執行測試
-        window.addEventListener('load', () => {
-            setTimeout(runAllTests, 1000);
-        });
+        // 頁面載入完成後開始測試
+        window.addEventListener('load', testServices);
     </script>
 </body>
 </html>

@@ -295,7 +295,7 @@ class SearchService {
             this.updateResultsCount(result.total);
 
             // 切換到搜尋頁面
-            NavigationService.navigateToPage('search');
+            window.NavigationService.navigateToPage('search');
 
         } catch (error) {
             console.error('瀏覽廁所失敗:', error);
