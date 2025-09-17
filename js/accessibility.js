@@ -46,7 +46,7 @@ class AccessibilityService {
             colorBlindSupport: false
         };
 
-        const savedSettings = Utils.Storage.get(CONFIG.CACHE.SETTINGS_KEY);
+        const savedSettings = Utils.Storage.get(window.CONFIG.CACHE.SETTINGS_KEY);
         return savedSettings ? { ...defaultSettings, ...savedSettings } : defaultSettings;
     }
 
@@ -54,7 +54,7 @@ class AccessibilityService {
      * 儲存無障礙設定
      */
     saveSettings() {
-        Utils.Storage.set(CONFIG.CACHE.SETTINGS_KEY, this.settings);
+        Utils.Storage.set(window.CONFIG.CACHE.SETTINGS_KEY, this.settings);
     }
 
     /**
