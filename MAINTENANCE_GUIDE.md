@@ -21,7 +21,7 @@
 2. **輸入維護資訊**：
    - 維護原因（預設：系統升級）
    - 預估維護時間（預設：1小時）
-   - 聯絡方式（預設：contact@lkjh-maker.com）
+   - 聯絡方式（預設：makerbackup0821@gmail.com）
 3. **確認啟動** - 輸入 `Y` 確認
 4. **完成** - 網站自動切換到維護模式
 
@@ -110,7 +110,7 @@ graph TD
     "endTime": null,
     "reason": "系統升級",
     "duration": "1小時",
-    "contact": "contact@lkjh-maker.com"
+    "contact": "makerbackup0821@gmail.com"
 }
 ```
 
@@ -153,8 +153,8 @@ graph TD
 ## 📞 技術支援
 
 如有任何問題，請聯絡：
-- **電子郵件**: contact@lkjh-maker.com
-- **GitHub**: [lkjh-maker](https://github.com/lkjh-maker)
+- **電子郵件**: makerbackup0821@gmail.com
+- **GitHub**: [makerbackup0821](https://github.com/makerbackup0821)
 
 ---
 

@@ -41,8 +41,8 @@
 
 1. **複製專案**
 ```bash
-git clone https://github.com/YOUR_USERNAME/無障礙廁所GO-V2.git
-cd 無障礙廁所GO-V2
+git clone https://github.com/makerbackup0821/GO-V2-main.git
+cd GO-V2-main
 ```
 
 2. **安裝依賴**
@@ -86,7 +86,7 @@ npm run dev:frontend
    ```
 5. **自動部署**：
    - GitHub Actions 會自動建置並部署網站
-   - 部署完成後可訪問：`https://YOUR_USERNAME.github.io/無障礙廁所GO-V2/`
+   - 部署完成後可訪問：`https://makerbackup0821.github.io/GO-V2-main/`
 
 詳細部署說明請參考：[GitHub 部署指南](docs/GITHUB_DEPLOYMENT.md)
 
@@ -171,9 +171,8 @@ npm run build
 
 ## 聯絡我們
 
-- **專案維護者**: LKJH MAKER 鹿中創客
-- **電子郵件**: contact@lkjh-maker.com
-- **網站**: https://lkjh-maker.com
+- **專案維護者**: MAKER BACKUP
+- **電子郵件**: makerbackup0821@gmail.com
 
 ## 致謝
 

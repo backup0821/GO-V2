@@ -225,7 +225,7 @@ MAPS: {
 ## 📞 技術支援
 
 ### 聯絡方式
-- **電子郵件**: contact@lkjh-maker.com
+- **電子郵件**: makerbackup0821@gmail.com
 - **GitHub Issues**: 技術問題回報
 - **社群討論**: GitHub Discussions
 

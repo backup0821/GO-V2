@@ -9,7 +9,7 @@ Disallow: /_next/
 Disallow: /node_modules/
 
 # 網站地圖
-Sitemap: https://accessible-toilet-go.lkjh-maker.com/sitemap.xml
+Sitemap: https://makerbackup0821.github.io/GO-V2-main/sitemap.xml
 
 # 爬取延遲
 Crawl-delay: 1

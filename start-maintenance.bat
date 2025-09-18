@@ -38,8 +38,8 @@ if "%reason%"=="" set reason=系統升級
 set /p duration="預估維護時間 (預設: 1小時): "
 if "%duration%"=="" set duration=1小時
 
-set /p contact="聯絡方式 (預設: contact@lkjh-maker.com): "
-if "%contact%"=="" set contact=contact@lkjh-maker.com
+set /p contact="聯絡方式 (預設: makerbackup0821@gmail.com): "
+if "%contact%"=="" set contact=makerbackup0821@gmail.com
 
 echo.
 echo 📋 維護設定：
