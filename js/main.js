@@ -64,8 +64,8 @@ class App {
             if (response.ok) {
                 const data = await response.json();
                 if (data.maintenance === true) {
-                    console.log('系統正在維護中，重新導向到維護頁面');
-                    window.location.href = 'maintenance.html';
+                    console.log('系統正在維護中，但當前頁面已經是維護頁面，不需要跳轉');
+                    // 不再自動跳轉，因為維護模式時 index.html 已經被替換成維護頁面
                     return;
                 }
             }

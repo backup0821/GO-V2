@@ -51,26 +51,18 @@ jobs:
           }
           EOF
           
-          # 備份原始 index.html
-          if [ ! -f "index.html.backup" ]; then
-            cp index.html index.html.backup
+          # 備份原始 index.html 為 main_index.html
+          if [ ! -f "main_index.html" ]; then
+            cp index.html main_index.html
           fi
           
-          # 建立重導向頁面
-          cat > index.html << 'EOF'
-          <!DOCTYPE html>
-          <html lang="zh-TW">
-          <head>
-              <meta charset="UTF-8">
-              <meta name="viewport" content="width=device-width, initial-scale=1.0">
-              <title>系統維護中 - 無障礙廁所GO V2</title>
-              <meta http-equiv="refresh" content="0; url=maintenance.html">
-          </head>
-          <body>
-              <script>window.location.href = 'maintenance.html';</script>
-          </body>
-          </html>
-          EOF
+          # 將 maintenance.html 複製為 index.html
+          if [ -f "maintenance.html" ]; then
+            cp maintenance.html index.html
+          else
+            echo "❌ 找不到 maintenance.html 檔案"
+            exit 1
+          fi
           
           echo "✅ 維護模式已啟動"
 
@@ -92,8 +84,8 @@ jobs:
           EOF
           
           # 恢復原始 index.html
-          if [ -f "index.html.backup" ]; then
-            cp index.html.backup index.html
+          if [ -f "main_index.html" ]; then
+            cp main_index.html index.html
           fi
           
           echo "✅ 維護模式已結束"

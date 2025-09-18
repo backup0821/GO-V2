@@ -61,9 +61,10 @@ end-maintenance.bat
      "reason": "您的維護原因"
    }
    
-   # 備份並修改 index.html
-   cp index.html index.html.backup
-   # 建立重導向到 maintenance.html 的 index.html
+   # 備份原始 index.html 為 main_index.html
+   cp index.html main_index.html
+   # 將 maintenance.html 複製為 index.html
+   cp maintenance.html index.html
    ```
 
 2. **結束維護模式**
@@ -78,7 +79,7 @@ end-maintenance.bat
    }
    
    # 恢復原始 index.html
-   cp index.html.backup index.html
+   cp main_index.html index.html
    ```
 
 ## 維護狀態檔案格式

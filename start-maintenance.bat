@@ -71,29 +71,21 @@ echo     "contact": "%contact%"
 echo }
 ) > maintenance-status.json
 
-REM 備份原始 index.html
-if not exist "index.html.backup" (
-    copy "index.html" "index.html.backup" >nul
-    echo ✅ 已備份原始 index.html
+REM 備份原始 index.html 為 main_index.html
+if not exist "main_index.html" (
+    copy "index.html" "main_index.html" >nul
+    echo ✅ 已備份原始 index.html 為 main_index.html
 )
 
-REM 建立重導向到維護頁面的 index.html
-(
-echo ^<!DOCTYPE html^>
-echo ^<html lang="zh-TW"^>
-echo ^<head^>
-echo     ^<meta charset="UTF-8"^>
-echo     ^<meta name="viewport" content="width=device-width, initial-scale=1.0"^>
-echo     ^<title^>系統維護中 - 無障礙廁所GO V2^</title^>
-echo     ^<meta http-equiv="refresh" content="0; url=maintenance.html"^>
-echo ^</head^>
-echo ^<body^>
-echo     ^<script^>
-echo         window.location.href = 'maintenance.html';
-echo     ^</script^>
-echo ^</body^>
-echo ^</html^>
-) > index.html
+REM 將 maintenance.html 複製為 index.html
+if exist "maintenance.html" (
+    copy "maintenance.html" "index.html" >nul
+    echo ✅ 已將維護頁面設為首頁
+) else (
+    echo ❌ 找不到 maintenance.html 檔案
+    pause
+    exit /b 1
+)
 
 echo ✅ 維護模式已啟動
 echo.
@@ -104,6 +96,7 @@ echo   - 預估時間: %duration%
 echo   - 聯絡方式: %contact%
 echo.
 echo 🌐 網站現在會顯示維護頁面
+echo 📁 原始網站檔案已備份為 main_index.html
 echo 🔄 要結束維護模式，請執行 end-maintenance.bat
 echo.
 echo 按任意鍵退出...
