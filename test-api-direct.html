@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 直接測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #1565c0;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: monospace;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        .info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>API 直接測試</h1>
+        
+        <div>
+            <h3>1. 直接測試 API 連線</h3>
+            <button class="test-button" onclick="testDirectAPI()">測試 API 連線</button>
+            <div id="direct-api-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div>
+            <h3>2. 測試 API 服務</h3>
+            <button class="test-button" onclick="testAPIService()">測試 API 服務</button>
+            <div id="api-service-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div>
+            <h3>3. 測試搜尋功能</h3>
+            <button class="test-button" onclick="testSearch()">測試搜尋</button>
+            <div id="search-result" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- 載入必要的 JavaScript 檔案 -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+
+    <script>
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `test-result ${type}`;
+            element.textContent = message;
+        }
+
+        async function testDirectAPI() {
+            try {
+                const apiUrl = 'https://data.moenv.gov.tw/api/v2/fac_p_07?api_key=58d6040c-dca7-407f-a244-d0bfdfa8144a&limit=5&format=JSON';
+                
+                showResult('direct-api-result', '正在測試 API 連線...', 'info');
+                
+                const response = await fetch(apiUrl);
+                console.log('API 回應:', response);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                console.log('API 資料:', data);
+                
+                if (data && data.records) {
+                    showResult('direct-api-result', 
+                        `✅ API 連線成功\n狀態: ${response.status}\n資料筆數: ${data.records.length}\n\n第一筆資料:\n${JSON.stringify(data.records[0], null, 2)}`, 
+                        'success');
+                } else {
+                    throw new Error('API 回應格式錯誤');
+                }
+            } catch (error) {
+                console.error('API 測試錯誤:', error);
+                showResult('direct-api-result', 
+                    `❌ API 連線失敗: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function testAPIService() {
+            try {
+                if (!window.API || !window.API.service) {
+                    throw new Error('API 服務未載入');
+                }
+                
+                showResult('api-service-result', '正在測試 API 服務...', 'info');
+                
+                const toilets = await window.API.service.getAllToilets(5);
+                console.log('API 服務結果:', toilets);
+                
+                if (Array.isArray(toilets)) {
+                    showResult('api-service-result', 
+                        `✅ API 服務正常\n取得 ${toilets.length} 筆資料\n\n第一筆資料:\n${JSON.stringify(toilets[0], null, 2)}`, 
+                        'success');
+                } else {
+                    throw new Error('API 服務返回格式錯誤');
+                }
+            } catch (error) {
+                console.error('API 服務測試錯誤:', error);
+                showResult('api-service-result', 
+                    `❌ API 服務錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function testSearch() {
+            try {
+                if (!window.API || !window.API.service) {
+                    throw new Error('API 服務未載入');
+                }
+                
+                showResult('search-result', '正在測試搜尋功能...', 'info');
+                
+                // 先取得資料
+                const allToilets = await window.API.service.getAllToilets(10);
+                console.log('所有廁所資料:', allToilets);
+                
+                if (allToilets.length === 0) {
+                    showResult('search-result', 
+                        '⚠️ 沒有廁所資料可供搜尋', 
+                        'info');
+                    return;
+                }
+                
+                // 測試搜尋
+                const result = await window.API.service.searchNearbyToilets({
+                    keyword: '台北',
+                    limit: 5
+                });
+                
+                console.log('搜尋結果:', result);
+                
+                showResult('search-result', 
+                    `✅ 搜尋功能測試完成\n原始資料: ${allToilets.length} 筆\n搜尋結果: ${result.total} 筆\n\n搜尋到的廁所:\n${result.toilets.map(t => `- ${t.name} (${t.address})`).join('\n')}`, 
+                    'success');
+            } catch (error) {
+                console.error('搜尋測試錯誤:', error);
+                showResult('search-result', 
+                    `❌ 搜尋功能錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        // 頁面載入完成後自動執行基本測試
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testDirectAPI();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

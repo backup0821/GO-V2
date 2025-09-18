@@ -169,17 +169,45 @@
                     throw new Error('API 服務未載入');
                 }
                 
+                // 檢查 API 配置
+                if (!window.CONFIG || !window.CONFIG.API) {
+                    throw new Error('API 配置未載入');
+                }
+                
+                console.log('API 配置:', window.CONFIG.API);
+                
+                // 測試 API 連線
+                const apiUrl = `${window.CONFIG.API.BASE_URL}?api_key=${window.CONFIG.API.API_KEY}&limit=5&format=JSON`;
+                console.log('測試 API URL:', apiUrl);
+                
+                // 直接測試 fetch
+                const response = await fetch(apiUrl);
+                console.log('API 回應狀態:', response.status, response.statusText);
+                
+                if (!response.ok) {
+                    throw new Error(`API 請求失敗: ${response.status} ${response.statusText}`);
+                }
+                
+                const rawData = await response.json();
+                console.log('原始 API 資料:', rawData);
+                
+                if (!rawData || !rawData.records) {
+                    throw new Error('API 回應格式錯誤：缺少 records 欄位');
+                }
+                
                 // 測試取得廁所資料
                 const toilets = await window.API.service.getAllToilets(10);
+                console.log('處理後的廁所資料:', toilets);
                 
                 if (Array.isArray(toilets)) {
                     showResult('api-result', 
-                        `✅ API 服務正常\n取得 ${toilets.length} 筆廁所資料`, 
+                        `✅ API 服務正常\n原始資料: ${rawData.records.length} 筆\n處理後: ${toilets.length} 筆`, 
                         'success');
                 } else {
                     throw new Error('API 回應格式錯誤');
                 }
             } catch (error) {
+                console.error('API 服務測試錯誤:', error);
                 showResult('api-result', 
                     `❌ API 服務錯誤: ${error.message}`, 
                     'error');
@@ -188,24 +216,44 @@
 
         async function testSearchFunction() {
             try {
-                if (!window.SearchService) {
-                    throw new Error('搜尋服務未載入');
+                if (!window.API || !window.API.service) {
+                    throw new Error('API 服務未載入');
+                }
+                
+                // 先測試取得廁所資料
+                console.log('正在測試 API 資料取得...');
+                const allToilets = await window.API.service.getAllToilets(10);
+                console.log('取得的廁所資料:', allToilets);
+                
+                if (!Array.isArray(allToilets)) {
+                    throw new Error('API 返回的資料格式錯誤');
+                }
+                
+                if (allToilets.length === 0) {
+                    showResult('search-result', 
+                        `⚠️ API 資料為空\n可能是網路問題或 API 暫時不可用\n建議檢查網路連線或稍後再試`, 
+                        'info');
+                    return;
                 }
                 
                 // 測試搜尋功能
+                console.log('正在測試搜尋功能...');
                 const result = await window.API.service.searchNearbyToilets({
                     keyword: '台北',
                     limit: 5
                 });
                 
+                console.log('搜尋結果:', result);
+                
                 if (result && Array.isArray(result.toilets)) {
                     showResult('search-result', 
-                        `✅ 搜尋功能正常\n找到 ${result.total} 筆結果`, 
+                        `✅ 搜尋功能正常\nAPI 資料: ${allToilets.length} 筆\n搜尋結果: ${result.total} 筆`, 
                         'success');
                 } else {
                     throw new Error('搜尋結果格式錯誤');
                 }
             } catch (error) {
+                console.error('搜尋功能測試錯誤:', error);
                 showResult('search-result', 
                     `❌ 搜尋功能錯誤: ${error.message}`, 
                     'error');

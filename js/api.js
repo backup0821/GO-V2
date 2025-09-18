@@ -68,18 +68,25 @@ class APIService {
         const cached = this.cache.get(cacheKey);
         
         if (cached && Date.now() - cached.timestamp < 24 * 60 * 60 * 1000) {
+            console.log('使用快取資料:', cached.data.length, '筆');
             return cached.data;
         }
 
         try {
             const url = `${this.baseURL}?api_key=${this.apiKey}&limit=${limit}&sort=ImportDate desc&format=JSON`;
+            console.log('API 請求 URL:', url);
+            
             const response = await this.request(url);
+            console.log('API 回應:', response);
             
             if (!response || !response.records) {
-                throw new Error('API 回應格式錯誤');
+                throw new Error('API 回應格式錯誤：缺少 records 欄位');
             }
             
+            console.log('原始資料筆數:', response.records.length);
+            
             const toilets = response.records.map(record => this.transformToiletData(record));
+            console.log('轉換後資料筆數:', toilets.length);
             
             // 快取資料
             this.cache.set(cacheKey, {
@@ -100,7 +107,7 @@ class APIService {
             if (window.Utils && window.Utils.Storage) {
                 const localData = window.Utils.Storage.get('accessible_toilets_cache');
                 if (localData) {
-                    console.log('使用本地快取資料');
+                    console.log('使用本地快取資料:', localData.length, '筆');
                     return localData;
                 }
             }
