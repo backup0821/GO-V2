@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+
+# 允許所有搜尋引擎索引
+Disallow: /admin/
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /_next/
+Disallow: /node_modules/
+
+# 網站地圖
+Sitemap: https://makerbackup0821.github.io/GO-V2-main/sitemap.xml
+
+# 爬取延遲
+Crawl-delay: 1

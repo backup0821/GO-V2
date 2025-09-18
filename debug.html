@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>除錯頁面 - 無障礙廁所GO V2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .debug-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .debug-item {
+            margin: 10px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+        }
+        .success { border-color: #4CAF50; background-color: #f1f8e9; }
+        .error { border-color: #f44336; background-color: #ffebee; }
+        .warning { border-color: #ff9800; background-color: #fff3e0; }
+        .info { border-color: #2196F3; background-color: #e3f2fd; }
+        pre {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+            font-size: 12px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn-success { background: #4CAF50; color: white; }
+        .btn-primary { background: #2196F3; color: white; }
+        .btn-warning { background: #ff9800; color: white; }
+    </style>
+</head>
+<body>
+    <div class="debug-container">
+        <h1>🔍 除錯頁面</h1>
+        <p>此頁面用於詳細診斷 JavaScript 服務載入和初始化問題。</p>
+        
+        <div style="margin: 20px 0;">
+            <button class="btn-primary" onclick="runFullDiagnostic()">🔍 完整診斷</button>
+            <button class="btn-warning" onclick="testInitialization()">⚡ 測試初始化</button>
+            <button class="btn-success" onclick="window.location.href='index.html'">🏠 回到首頁</button>
+        </div>
+        
+        <div id="debug-results">
+            <div class="debug-item info">
+                <strong>⏳ 準備進行診斷...</strong>
+            </div>
+        </div>
+    </div>
+
+    <!-- 載入所有 JavaScript 檔案 -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/main.js"></script>
+    
+    <script>
+        let debugResults = document.getElementById('debug-results');
+        
+        function addDebugItem(message, type = 'info', details = null) {
+            const div = document.createElement('div');
+            div.className = `debug-item ${type}`;
+            
+            let content = `<strong>${message}</strong>`;
+            if (details) {
+                content += `<pre>${details}</pre>`;
+            }
+            
+            div.innerHTML = content;
+            debugResults.appendChild(div);
+        }
+        
+        function runFullDiagnostic() {
+            debugResults.innerHTML = '';
+            addDebugItem('🔍 開始完整診斷...', 'info');
+            
+            // 1. 檢查 window 物件
+            setTimeout(() => {
+                checkWindowObjects();
+            }, 100);
+            
+            // 2. 檢查服務類別
+            setTimeout(() => {
+                checkServiceClasses();
+            }, 200);
+            
+            // 3. 檢查服務實例
+            setTimeout(() => {
+                checkServiceInstances();
+            }, 300);
+            
+            // 4. 檢查方法
+            setTimeout(() => {
+                checkMethods();
+            }, 400);
+            
+            // 5. 測試初始化
+            setTimeout(() => {
+                testInitialization();
+            }, 500);
+        }
+        
+        function checkWindowObjects() {
+            addDebugItem('📋 檢查 Window 物件中的服務...', 'info');
+            
+            const services = [
+                'CONFIG', 'Utils', 'APIService', 'AccessibilityService', 
+                'NavigationService', 'SearchService', 'MapService', 'App'
+            ];
+            
+            services.forEach(service => {
+                if (window[service]) {
+                    addDebugItem(`✅ ${service} 存在於 window 物件`, 'success', 
+                        `類型: ${typeof window[service]}, 建構函數: ${window[service].constructor?.name || 'N/A'}`);
+                } else {
+                    addDebugItem(`❌ ${service} 不存在於 window 物件`, 'error');
+                    
+                    // 檢查是否在載入中
+                    if (service === 'CONFIG') {
+                        addDebugItem(`   🔍 檢查 CONFIG 物件...`, 'warning');
+                        // 等待一下再檢查
+                        setTimeout(() => {
+                            if (window.CONFIG) {
+                                addDebugItem(`   ✅ CONFIG 延遲載入成功`, 'success');
+                            } else {
+                                addDebugItem(`   ❌ CONFIG 仍然不存在`, 'error');
+                            }
+                        }, 1000);
+                    }
+                }
+            });
+        }
+        
+        function checkServiceClasses() {
+            addDebugItem('🏗️ 檢查服務類別定義...', 'info');
+            
+            try {
+                // 檢查類別是否存在
+                if (typeof AccessibilityService !== 'undefined') {
+                    addDebugItem('✅ AccessibilityService 類別已定義', 'success');
+                } else {
+                    addDebugItem('❌ AccessibilityService 類別未定義', 'error');
+                }
+                
+                if (typeof NavigationService !== 'undefined') {
+                    addDebugItem('✅ NavigationService 類別已定義', 'success');
+                } else {
+                    addDebugItem('❌ NavigationService 類別未定義', 'error');
+                }
+                
+                if (typeof SearchService !== 'undefined') {
+                    addDebugItem('✅ SearchService 類別已定義', 'success');
+                } else {
+                    addDebugItem('❌ SearchService 類別未定義', 'error');
+                }
+                
+                if (typeof MapService !== 'undefined') {
+                    addDebugItem('✅ MapService 類別已定義', 'success');
+                } else {
+                    addDebugItem('❌ MapService 類別未定義', 'error');
+                }
+            } catch (error) {
+                addDebugItem(`❌ 檢查類別時發生錯誤: ${error.message}`, 'error', error.stack);
+            }
+        }
+        
+        function checkServiceInstances() {
+            addDebugItem('🔧 檢查服務實例...', 'info');
+            
+            const instances = [
+                'window.AccessibilityService',
+                'window.NavigationService', 
+                'window.SearchService',
+                'window.MapService'
+            ];
+            
+            instances.forEach(instance => {
+                try {
+                    const service = eval(instance);
+                    if (service) {
+                        addDebugItem(`✅ ${instance} 實例存在`, 'success', 
+                            `類型: ${typeof service}, 建構函數: ${service.constructor.name}`);
+                    } else {
+                        addDebugItem(`❌ ${instance} 實例不存在`, 'error');
+                    }
+                } catch (error) {
+                    addDebugItem(`❌ ${instance} 檢查失敗: ${error.message}`, 'error');
+                }
+            });
+        }
+        
+        function checkMethods() {
+            addDebugItem('⚙️ 檢查服務方法...', 'info');
+            
+            const methodChecks = [
+                { service: 'window.AccessibilityService', method: 'initialize' },
+                { service: 'window.NavigationService', method: 'initialize' },
+                { service: 'window.SearchService', method: 'initialize' },
+                { service: 'window.MapService', method: 'initialize' }
+            ];
+            
+            methodChecks.forEach(check => {
+                try {
+                    const service = eval(check.service);
+                    if (service && typeof service[check.method] === 'function') {
+                        addDebugItem(`✅ ${check.service}.${check.method} 方法存在`, 'success');
+                    } else {
+                        addDebugItem(`❌ ${check.service}.${check.method} 方法不存在或不是函數`, 'error', 
+                            `服務類型: ${typeof service}, 方法類型: ${typeof service ? typeof service[check.method] : 'undefined'}`);
+                    }
+                } catch (error) {
+                    addDebugItem(`❌ ${check.service}.${check.method} 檢查失敗: ${error.message}`, 'error');
+                }
+            });
+        }
+        
+        function testInitialization() {
+            addDebugItem('🚀 測試服務初始化...', 'info');
+            
+            // 測試無障礙服務
+            try {
+                if (window.AccessibilityService && typeof window.AccessibilityService.initialize === 'function') {
+                    window.AccessibilityService.initialize();
+                    addDebugItem('✅ AccessibilityService 初始化成功', 'success');
+                } else {
+                    addDebugItem('❌ AccessibilityService 初始化失敗 - 服務或方法不存在', 'error');
+                }
+            } catch (error) {
+                addDebugItem(`❌ AccessibilityService 初始化錯誤: ${error.message}`, 'error', error.stack);
+            }
+            
+            // 測試導航服務
+            try {
+                if (window.NavigationService && typeof window.NavigationService.initialize === 'function') {
+                    window.NavigationService.initialize();
+                    addDebugItem('✅ NavigationService 初始化成功', 'success');
+                } else {
+                    addDebugItem('❌ NavigationService 初始化失敗 - 服務或方法不存在', 'error');
+                }
+            } catch (error) {
+                addDebugItem(`❌ NavigationService 初始化錯誤: ${error.message}`, 'error', error.stack);
+            }
+            
+            // 測試搜尋服務
+            try {
+                if (window.SearchService && typeof window.SearchService.initialize === 'function') {
+                    window.SearchService.initialize();
+                    addDebugItem('✅ SearchService 初始化成功', 'success');
+                } else {
+                    addDebugItem('❌ SearchService 初始化失敗 - 服務或方法不存在', 'error');
+                }
+            } catch (error) {
+                addDebugItem(`❌ SearchService 初始化錯誤: ${error.message}`, 'error', error.stack);
+            }
+            
+            // 測試地圖服務
+            try {
+                if (window.MapService) {
+                    addDebugItem('✅ MapService 載入成功', 'success');
+                } else {
+                    addDebugItem('❌ MapService 載入失敗', 'error');
+                }
+            } catch (error) {
+                addDebugItem(`❌ MapService 載入錯誤: ${error.message}`, 'error', error.stack);
+            }
+            
+            addDebugItem('🎯 初始化測試完成', 'info');
+        }
+        
+        // 頁面載入完成後自動開始診斷
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                runFullDiagnostic();
+            }, 500);
+        });
+    </script>
+</body>
+</html>
