@@ -64,8 +64,8 @@ class App {
             if (response.ok) {
                 const data = await response.json();
                 if (data.maintenance === true) {
-                    console.log('系統正在維護中，重新導向到維護頁面');
-                    window.location.href = 'maintenance.html';
+                    console.log('系統正在維護中，但當前頁面已經是維護頁面，不需要跳轉');
+                    // 不再自動跳轉，因為維護模式時 index.html 已經被替換成維護頁面
                     return;
                 }
             }
@@ -78,13 +78,16 @@ class App {
      * 初始化服務
      */
     async initializeServices() {
+        // 等待所有腳本載入完成
+        await this.waitForServices();
+        
         // 檢查並初始化無障礙服務
         if (window.AccessibilityService && typeof window.AccessibilityService.initialize === 'function') {
             window.AccessibilityService.initialize();
             this.services.accessibility = window.AccessibilityService;
             console.log('✅ 無障礙服務已初始化');
         } else {
-            console.error('❌ 無障礙服務載入失敗');
+            console.warn('⚠️ 無障礙服務載入失敗，將使用基本功能');
         }
 
         // 檢查並初始化導航服務
@@ -93,7 +96,7 @@ class App {
             this.services.navigation = window.NavigationService;
             console.log('✅ 導航服務已初始化');
         } else {
-            console.error('❌ 導航服務載入失敗');
+            console.warn('⚠️ 導航服務載入失敗，將使用基本功能');
         }
 
         // 檢查並初始化搜尋服務
@@ -102,7 +105,7 @@ class App {
             this.services.search = window.SearchService;
             console.log('✅ 搜尋服務已初始化');
         } else {
-            console.error('❌ 搜尋服務載入失敗');
+            console.warn('⚠️ 搜尋服務載入失敗，將使用基本功能');
         }
 
         // 檢查並初始化地圖服務（延遲初始化）
@@ -110,10 +113,26 @@ class App {
             this.services.map = window.MapService;
             console.log('✅ 地圖服務已載入');
         } else {
-            console.error('❌ 地圖服務載入失敗');
+            console.warn('⚠️ 地圖服務載入失敗，地圖功能將不可用');
         }
 
-        console.log('所有服務已初始化');
+        console.log('服務初始化完成');
+    }
+
+    /**
+     * 等待服務載入完成
+     */
+    async waitForServices() {
+        return new Promise((resolve) => {
+            const checkServices = () => {
+                if (window.CONFIG && window.Utils && window.API) {
+                    resolve();
+                } else {
+                    setTimeout(checkServices, 50);
+                }
+            };
+            checkServices();
+        });
     }
 
     /**
@@ -136,14 +155,22 @@ class App {
         });
 
         // 視窗大小變化事件
-        window.addEventListener('resize', Utils.debounce(() => {
-            this.onWindowResize();
-        }, 250));
+        window.addEventListener('resize', window.Utils && window.Utils.debounce ? 
+            window.Utils.debounce(() => {
+                this.onWindowResize();
+            }, 250) : 
+            () => {
+                this.onWindowResize();
+            });
 
         // 視窗滾動事件
-        window.addEventListener('scroll', Utils.throttle(() => {
-            this.onWindowScroll();
-        }, window.CONFIG.PERFORMANCE.THROTTLE_DELAY));
+        window.addEventListener('scroll', window.Utils && window.Utils.throttle ? 
+            window.Utils.throttle(() => {
+                this.onWindowScroll();
+            }, 100) : 
+            () => {
+                this.onWindowScroll();
+            });
 
         // 鍵盤事件
         document.addEventListener('keydown', (e) => {
@@ -361,7 +388,7 @@ class App {
         this.trackSearch(detail);
         
         // 更新地圖（如果需要）
-        if (detail.toilets.length > 0 && window.MapService.isInitialized) {
+        if (detail.toilets.length > 0 && window.MapService && window.MapService.isInitialized) {
             // 地圖更新邏輯
         }
     }
@@ -383,9 +410,11 @@ class App {
      */
     onWindowResize() {
         // 調整地圖大小
-        if (window.MapService.isInitialized && window.MapService.map) {
+        if (window.MapService && window.MapService.isInitialized && window.MapService.map) {
             setTimeout(() => {
-                google.maps.event.trigger(window.MapService.map, 'resize');
+                if (window.google && window.google.maps) {
+                    window.google.maps.event.trigger(window.MapService.map, 'resize');
+                }
             }, 100);
         }
         
@@ -494,7 +523,7 @@ class App {
         }
         
         // 通知服務網路狀態變化
-        if (API && API.service) {
+        if (window.API && window.API.service) {
             // API 服務可以根據網路狀態調整行為
         }
     }
@@ -512,7 +541,9 @@ class App {
         this.logError(error, { filename, lineno });
         
         // 顯示使用者友善的錯誤訊息
-        Utils.showMessage('發生錯誤，請重新整理頁面', 'error');
+        if (window.Utils && window.Utils.showMessage) {
+            window.Utils.showMessage('發生錯誤，請重新整理頁面', 'error');
+        }
     }
 
     /**
@@ -526,7 +557,9 @@ class App {
         this.logError(reason);
         
         // 顯示使用者友善的錯誤訊息
-        Utils.showMessage('發生錯誤，請稍後再試', 'error');
+        if (window.Utils && window.Utils.showMessage) {
+            window.Utils.showMessage('發生錯誤，請稍後再試', 'error');
+        }
     }
 
     /**
@@ -669,6 +702,8 @@ document.addEventListener('appReady', () => {
     
     // 顯示歡迎訊息
     setTimeout(() => {
-        Utils.showMessage('歡迎使用無障礙廁所GO V2！', 'info', 3000);
+        if (window.Utils && window.Utils.showMessage) {
+            window.Utils.showMessage('歡迎使用無障礙廁所GO V2！', 'info', 3000);
+        }
     }, 1000);
 });

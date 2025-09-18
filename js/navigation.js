@@ -432,17 +432,21 @@ class NavigationService {
      */
     async handleLocationRequest() {
         try {
-            Utils.showMessage('正在取得位置資訊...', 'info');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('正在取得位置資訊...', 'info');
+            }
             
-            const location = await API.location.getCurrentPosition();
+            const location = await window.API.location.getCurrentPosition();
             
             // 搜尋附近廁所（不使用地圖功能）
-            const nearbyToilets = await API.service.searchNearbyToilets({
+            const nearbyToilets = await window.API.service.searchNearbyToilets({
                 location: location,
                 limit: 20
             });
             
-            Utils.showMessage('位置資訊已取得（地圖功能維護中）', 'success');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('位置資訊已取得（地圖功能維護中）', 'success');
+            }
             
             // 切換到搜尋頁面並顯示結果
             this.navigateToPage('search');
@@ -450,7 +454,7 @@ class NavigationService {
             // 觸發搜尋結果顯示事件
             const event = new CustomEvent('showSearchResults', {
                 detail: {
-                    toilets: nearbyToilets.toilets,
+                    toilets: nearbyToilets.toilets || [],
                     location: location
                 }
             });
@@ -458,7 +462,9 @@ class NavigationService {
             
         } catch (error) {
             console.error('位置請求失敗:', error);
-            Utils.showMessage(error.message, 'error');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage(error.message, 'error');
+            }
         }
     }
 

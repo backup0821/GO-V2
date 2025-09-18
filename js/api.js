@@ -63,17 +63,21 @@ class APIService {
      * @param {number} limit - 限制數量
      * @returns {Promise<Array>} 廁所資料列表
      */
-    async getAllToilets(limit = window.CONFIG.API.LIMIT) {
+    async getAllToilets(limit = 1000) {
         const cacheKey = `toilets_${limit}`;
         const cached = this.cache.get(cacheKey);
         
-        if (cached && Date.now() - cached.timestamp < window.CONFIG.CACHE.CACHE_DURATION) {
+        if (cached && Date.now() - cached.timestamp < 24 * 60 * 60 * 1000) {
             return cached.data;
         }
 
         try {
             const url = `${this.baseURL}?api_key=${this.apiKey}&limit=${limit}&sort=ImportDate desc&format=JSON`;
             const response = await this.request(url);
+            
+            if (!response || !response.records) {
+                throw new Error('API 回應格式錯誤');
+            }
             
             const toilets = response.records.map(record => this.transformToiletData(record));
             
@@ -84,19 +88,26 @@ class APIService {
             });
 
             // 儲存到本地儲存
-            Utils.Storage.set(window.CONFIG.CACHE.TOILETS_KEY, toilets, window.CONFIG.CACHE.CACHE_DURATION);
+            if (window.Utils && window.Utils.Storage) {
+                window.Utils.Storage.set('accessible_toilets_cache', toilets, 24 * 60 * 60 * 1000);
+            }
             
             return toilets;
         } catch (error) {
             console.error('取得廁所資料失敗:', error);
             
             // 嘗試從本地儲存取得
-            const localData = Utils.Storage.get(window.CONFIG.CACHE.TOILETS_KEY);
-            if (localData) {
-                return localData;
+            if (window.Utils && window.Utils.Storage) {
+                const localData = window.Utils.Storage.get('accessible_toilets_cache');
+                if (localData) {
+                    console.log('使用本地快取資料');
+                    return localData;
+                }
             }
             
-            throw new Error(window.CONFIG.MESSAGES.API_ERROR);
+            // 返回空陣列而不是拋出錯誤
+            console.warn('無法取得廁所資料，返回空陣列');
+            return [];
         }
     }
 
@@ -110,25 +121,29 @@ class APIService {
             // 先取得所有資料
             let allToilets = await this.getAllToilets();
             
+            if (!Array.isArray(allToilets)) {
+                allToilets = [];
+            }
+            
             // 關鍵字搜尋
-            if (params.keyword) {
-                allToilets = Utils.searchToilets(allToilets, params.keyword);
+            if (params.keyword && window.Utils && window.Utils.searchToilets) {
+                allToilets = window.Utils.searchToilets(allToilets, params.keyword);
             }
             
             // 篩選
-            if (params.filters) {
-                allToilets = Utils.filterToilets(allToilets, params.filters);
+            if (params.filters && window.Utils && window.Utils.filterToilets) {
+                allToilets = window.Utils.filterToilets(allToilets, params.filters);
             }
             
             // 根據位置計算距離並排序
-            if (params.location) {
-                allToilets = Utils.sortToilets(allToilets, 'distance', params.location);
-            } else if (params.sortBy) {
-                allToilets = Utils.sortToilets(allToilets, params.sortBy);
+            if (params.location && window.Utils && window.Utils.sortToilets) {
+                allToilets = window.Utils.sortToilets(allToilets, 'distance', params.location);
+            } else if (params.sortBy && window.Utils && window.Utils.sortToilets) {
+                allToilets = window.Utils.sortToilets(allToilets, params.sortBy);
             }
             
             // 分頁
-            const limit = params.limit || CONFIG.SEARCH.DEFAULT_LIMIT;
+            const limit = params.limit || 20;
             const page = params.page || 1;
             const startIndex = (page - 1) * limit;
             const endIndex = startIndex + limit;
@@ -143,7 +158,13 @@ class APIService {
             };
         } catch (error) {
             console.error('搜尋附近廁所失敗:', error);
-            throw new Error(window.CONFIG.MESSAGES.SEARCH_ERROR);
+            return {
+                toilets: [],
+                total: 0,
+                page: 1,
+                limit: 20,
+                hasMore: false
+            };
         }
     }
 
@@ -227,10 +248,10 @@ class LocationService {
      */
     async getCurrentPosition(options = {}) {
         return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) {
-            reject(new Error(window.CONFIG.MESSAGES.LOCATION_ERROR));
-            return;
-        }
+            if (!navigator.geolocation) {
+                reject(new Error('位置服務不可用'));
+                return;
+            }
 
             const defaultOptions = {
                 enableHighAccuracy: true,
@@ -250,22 +271,26 @@ class LocationService {
                     };
                     
                     this.currentLocation = location;
-                    Utils.Storage.set(window.CONFIG.CACHE.LOCATION_KEY, location);
+                    
+                    // 儲存位置到本地儲存
+                    if (window.Utils && window.Utils.Storage) {
+                        window.Utils.Storage.set('user_location', location);
+                    }
                     
                     resolve(location);
                 },
                 (error) => {
-                    let errorMessage = window.CONFIG.MESSAGES.LOCATION_ERROR;
+                    let errorMessage = '無法取得位置資訊';
                     
                     switch (error.code) {
                         case error.PERMISSION_DENIED:
-                            errorMessage = window.CONFIG.MESSAGES.LOCATION_DENIED;
+                            errorMessage = '位置存取權限被拒絕';
                             break;
                         case error.POSITION_UNAVAILABLE:
-                            errorMessage = window.CONFIG.MESSAGES.LOCATION_UNAVAILABLE;
+                            errorMessage = '位置資訊不可用';
                             break;
                         case error.TIMEOUT:
-                            errorMessage = window.CONFIG.MESSAGES.LOCATION_TIMEOUT;
+                            errorMessage = '位置請求超時';
                             break;
                     }
                     

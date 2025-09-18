@@ -48,8 +48,8 @@ class AccessibilityService {
 
         // 安全地載入設定，避免在初始化時出錯
         try {
-            if (window.CONFIG && window.CONFIG.CACHE && window.CONFIG.CACHE.SETTINGS_KEY && Utils && Utils.Storage) {
-                const savedSettings = Utils.Storage.get(window.CONFIG.CACHE.SETTINGS_KEY);
+            if (window.Utils && window.Utils.Storage) {
+                const savedSettings = window.Utils.Storage.get('accessibility_settings');
                 return savedSettings ? { ...defaultSettings, ...savedSettings } : defaultSettings;
             }
         } catch (error) {
@@ -63,7 +63,9 @@ class AccessibilityService {
      * 儲存無障礙設定
      */
     saveSettings() {
-        Utils.Storage.set(window.CONFIG.CACHE.SETTINGS_KEY, this.settings);
+        if (window.Utils && window.Utils.Storage) {
+            window.Utils.Storage.set('accessibility_settings', this.settings);
+        }
     }
 
     /**
@@ -612,7 +614,9 @@ class AccessibilityService {
         };
 
         this.updateSettings(defaultSettings);
-        Utils.showMessage('無障礙設定已重置', 'success');
+        if (window.Utils && window.Utils.showMessage) {
+            window.Utils.showMessage('無障礙設定已重置', 'success');
+        }
     }
 
     /**

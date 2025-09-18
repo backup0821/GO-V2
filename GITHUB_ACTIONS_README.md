@@ -36,7 +36,8 @@ git push
 
 **功能：**
 - ✅ 啟動/結束維護模式
-- ✅ 自動備份和恢復 index.html
+- ✅ 自動備份和恢復 index.html (備份為 main_index.html)
+- ✅ 將 maintenance.html 複製為 index.html
 - ✅ 更新 maintenance-status.json
 - ✅ 自動部署到 GitHub Pages
 - ✅ 建立維護記錄
@@ -51,7 +52,8 @@ git push
 
 **功能：**
 - ✅ 啟動/結束維護模式
-- ✅ 自動備份和恢復 index.html
+- ✅ 自動備份和恢復 index.html (備份為 main_index.html)
+- ✅ 將 maintenance.html 複製為 index.html
 - ✅ 更新 maintenance-status.json
 - ✅ 基本維護資訊設定
 
@@ -130,7 +132,7 @@ git push
    - 檢查瀏覽器快取
 
 3. **無法結束維護模式**
-   - 檢查 index.html.backup 是否存在
+   - 檢查 main_index.html 是否存在
    - 手動恢復原始檔案
    - 重新執行結束維護腳本
 
@@ -140,7 +142,7 @@ git push
 
 ```bash
 # 恢復原始 index.html
-cp index.html.backup index.html
+cp main_index.html index.html
 
 # 修改維護狀態
 echo '{"maintenance": false, "message": "系統正常運行"}' > maintenance-status.json

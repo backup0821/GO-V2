@@ -192,8 +192,8 @@ class SearchService {
 
         try {
             // 加入搜尋歷史
-            if (query && query.trim()) {
-                API.searchHistory.addSearchItem(query.trim(), this.currentFilters);
+            if (query && query.trim() && window.API && window.API.searchHistory) {
+                window.API.searchHistory.addSearchItem(query.trim(), this.currentFilters);
             }
 
             const searchParams = {
@@ -201,20 +201,22 @@ class SearchService {
                 filters: this.currentFilters,
                 sortBy: this.currentSortBy,
                 location: this.userLocation,
-                limit: window.CONFIG.SEARCH.DEFAULT_LIMIT,
+                limit: 20,
                 page: 1
             };
 
-            const result = await API.service.searchNearbyToilets(searchParams);
-            this.currentResults = result.toilets;
+            const result = await window.API.service.searchNearbyToilets(searchParams);
+            this.currentResults = result.toilets || [];
             this.currentPage = 1;
 
-            this.displaySearchResults(result.toilets, this.userLocation);
-            this.updateResultsCount(result.total);
+            this.displaySearchResults(result.toilets || [], this.userLocation);
+            this.updateResultsCount(result.total || 0);
 
         } catch (error) {
             console.error('搜尋失敗:', error);
-            Utils.showMessage(window.CONFIG.MESSAGES.SEARCH_ERROR, 'error');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('搜尋失敗，請稍後再試', 'error');
+            }
             this.showNoResults();
         } finally {
             this.isSearching = false;
@@ -245,9 +247,11 @@ class SearchService {
      */
     async getLocationAndSearch() {
         try {
-            Utils.showMessage('正在取得位置資訊...', 'info');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('正在取得位置資訊...', 'info');
+            }
             
-            const location = await API.location.getCurrentPosition();
+            const location = await window.API.location.getCurrentPosition();
             this.userLocation = location;
             
             // 搜尋附近廁所
@@ -255,22 +259,26 @@ class SearchService {
                 location: location,
                 filters: this.currentFilters,
                 sortBy: 'distance',
-                limit: window.CONFIG.SEARCH.DEFAULT_LIMIT,
+                limit: 20,
                 page: 1
             };
 
-            const result = await API.service.searchNearbyToilets(searchParams);
-            this.currentResults = result.toilets;
+            const result = await window.API.service.searchNearbyToilets(searchParams);
+            this.currentResults = result.toilets || [];
             this.currentPage = 1;
 
-            this.displaySearchResults(result.toilets, location);
-            this.updateResultsCount(result.total);
+            this.displaySearchResults(result.toilets || [], location);
+            this.updateResultsCount(result.total || 0);
 
-            Utils.showMessage('已找到附近廁所', 'success');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('已找到附近廁所', 'success');
+            }
 
         } catch (error) {
             console.error('位置搜尋失敗:', error);
-            Utils.showMessage(error.message, 'error');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage(error.message, 'error');
+            }
         }
     }
 
@@ -347,11 +355,19 @@ class SearchService {
      * @returns {string} 卡片HTML
      */
     createToiletCard(toilet, location = null) {
-        const distance = location ? Utils.formatDistance(toilet.distance) : '';
-        const gradeStars = Utils.getToiletGradeStars(toilet.grade);
+        const distance = location && toilet.distance ? 
+            (window.Utils && window.Utils.formatDistance ? 
+                window.Utils.formatDistance(toilet.distance) : 
+                `${Math.round(toilet.distance)}m`) : '';
+        
+        const gradeStars = window.Utils && window.Utils.getToiletGradeStars ? 
+            window.Utils.getToiletGradeStars(toilet.grade) : 3;
         const starIcons = '★'.repeat(gradeStars) + '☆'.repeat(5 - gradeStars);
-        const typeColor = Utils.getToiletTypeColor(toilet.type);
-        const gradeColor = Utils.getToiletGradeColor(toilet.grade);
+        
+        const typeColor = window.Utils && window.Utils.getToiletTypeColor ? 
+            window.Utils.getToiletTypeColor(toilet.type) : '#1976d2';
+        const gradeColor = window.Utils && window.Utils.getToiletGradeColor ? 
+            window.Utils.getToiletGradeColor(toilet.grade) : '#4caf50';
         
         return `
             <div class="toilet-card" data-toilet-id="${toilet.id}" tabindex="0" role="button" aria-label="查看 ${toilet.name} 詳細資訊">
@@ -412,7 +428,14 @@ class SearchService {
      * @param {boolean} show - 是否顯示
      */
     showLoading(show) {
-        Utils.toggleLoading('loadingIndicator', show);
+        if (window.Utils && window.Utils.toggleLoading) {
+            window.Utils.toggleLoading('loadingIndicator', show);
+        } else {
+            const element = document.getElementById('loadingIndicator');
+            if (element) {
+                element.style.display = show ? 'block' : 'none';
+            }
+        }
     }
 
     /**
@@ -422,7 +445,9 @@ class SearchService {
     updateResultsCount(count) {
         const resultsCount = document.querySelector('#resultsCount');
         if (resultsCount) {
-            resultsCount.textContent = `找到 ${Utils.formatNumber(count)} 間廁所`;
+            const formattedCount = window.Utils && window.Utils.formatNumber ? 
+                window.Utils.formatNumber(count) : count.toString();
+            resultsCount.textContent = `找到 ${formattedCount} 間廁所`;
         }
     }
 
@@ -432,15 +457,19 @@ class SearchService {
      */
     async showToiletDetails(toiletId) {
         try {
-            const toilet = await API.service.getToiletById(toiletId);
+            const toilet = await window.API.service.getToiletById(toiletId);
             if (toilet) {
                 this.openToiletModal(toilet);
             } else {
-                Utils.showMessage('找不到廁所資訊', 'error');
+                if (window.Utils && window.Utils.showMessage) {
+                    window.Utils.showMessage('找不到廁所資訊', 'error');
+                }
             }
         } catch (error) {
             console.error('取得廁所詳情失敗:', error);
-            Utils.showMessage(window.CONFIG.MESSAGES.API_ERROR, 'error');
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('無法取得廁所詳情', 'error');
+            }
         }
     }
 
@@ -481,12 +510,22 @@ class SearchService {
      * @returns {string} 詳情HTML
      */
     createToiletDetailsContent(toilet) {
-        const distance = toilet.distance ? Utils.formatDistance(toilet.distance) : '';
-        const gradeStars = Utils.getToiletGradeStars(toilet.grade);
+        const distance = toilet.distance ? 
+            (window.Utils && window.Utils.formatDistance ? 
+                window.Utils.formatDistance(toilet.distance) : 
+                `${Math.round(toilet.distance)}m`) : '';
+        
+        const gradeStars = window.Utils && window.Utils.getToiletGradeStars ? 
+            window.Utils.getToiletGradeStars(toilet.grade) : 3;
         const starIcons = '★'.repeat(gradeStars) + '☆'.repeat(5 - gradeStars);
-        const typeColor = Utils.getToiletTypeColor(toilet.type);
-        const gradeColor = Utils.getToiletGradeColor(toilet.grade);
-        const isFavorite = API.favorites.isFavorite(toilet.id);
+        
+        const typeColor = window.Utils && window.Utils.getToiletTypeColor ? 
+            window.Utils.getToiletTypeColor(toilet.type) : '#1976d2';
+        const gradeColor = window.Utils && window.Utils.getToiletGradeColor ? 
+            window.Utils.getToiletGradeColor(toilet.grade) : '#4caf50';
+        
+        const isFavorite = window.API && window.API.favorites ? 
+            window.API.favorites.isFavorite(toilet.id) : false;
 
         return `
             <div class="toilet-details">
@@ -702,37 +741,51 @@ window.showToiletDetailsModal = (toilet) => {
 };
 
 window.toggleFavorite = (toiletId) => {
-    if (API.favorites.isFavorite(toiletId)) {
-        API.favorites.removeFavorite(toiletId);
-        Utils.showMessage('已取消收藏', 'info');
-    } else {
-        API.favorites.addFavorite(toiletId);
-        Utils.showMessage('已加入收藏', 'success');
-    }
-    
-    // 重新整理模態框內容
-    const modal = document.querySelector('#toiletModal');
-    if (modal && modal.classList.contains('show')) {
-        const toilet = searchService.currentResults.find(t => t.id === toiletId);
-        if (toilet) {
-            searchService.openToiletModal(toilet);
+    if (window.API && window.API.favorites) {
+        if (window.API.favorites.isFavorite(toiletId)) {
+            window.API.favorites.removeFavorite(toiletId);
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('已取消收藏', 'info');
+            }
+        } else {
+            window.API.favorites.addFavorite(toiletId);
+            if (window.Utils && window.Utils.showMessage) {
+                window.Utils.showMessage('已加入收藏', 'success');
+            }
+        }
+        
+        // 重新整理模態框內容
+        const modal = document.querySelector('#toiletModal');
+        if (modal && modal.classList.contains('show')) {
+            const toilet = searchService.currentResults.find(t => t.id === toiletId);
+            if (toilet) {
+                searchService.openToiletModal(toilet);
+            }
         }
     }
 };
 
 window.navigateToToilet = (toiletId) => {
-    Utils.showMessage('導航功能維護中，請稍後再試', 'warning');
+    if (window.Utils && window.Utils.showMessage) {
+        window.Utils.showMessage('導航功能維護中，請稍後再試', 'warning');
+    }
 };
 
 window.copyToiletInfo = async (toiletId) => {
     const toilet = searchService.currentResults.find(t => t.id === toiletId);
     if (toilet) {
         const info = `${toilet.name}\n${toilet.address}\n${toilet.type} - ${toilet.grade}\n管理單位: ${toilet.management}`;
-        const success = await Utils.copyToClipboard(info);
-        if (success) {
-            Utils.showMessage('廁所資訊已複製到剪貼板', 'success');
-        } else {
-            Utils.showMessage('複製失敗', 'error');
+        if (window.Utils && window.Utils.copyToClipboard) {
+            const success = await window.Utils.copyToClipboard(info);
+            if (success) {
+                if (window.Utils.showMessage) {
+                    window.Utils.showMessage('廁所資訊已複製到剪貼板', 'success');
+                }
+            } else {
+                if (window.Utils.showMessage) {
+                    window.Utils.showMessage('複製失敗', 'error');
+                }
+            }
         }
     }
 };

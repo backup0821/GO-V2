@@ -59,19 +59,19 @@ echo }
 ) > maintenance-status.json
 
 REM 恢復原始 index.html
-if exist "index.html.backup" (
-    copy "index.html.backup" "index.html" >nul
+if exist "main_index.html" (
+    copy "main_index.html" "index.html" >nul
     echo ✅ 已恢復原始 index.html
     
     REM 詢問是否刪除備份檔案
     echo.
-    set /p deleteBackup="是否刪除備份檔案? (y/N): "
+    set /p deleteBackup="是否刪除備份檔案 main_index.html? (y/N): "
     if /i "!deleteBackup!"=="y" (
-        del "index.html.backup" >nul
+        del "main_index.html" >nul
         echo ✅ 已刪除備份檔案
     )
 ) else (
-    echo ⚠️  找不到備份檔案，請手動檢查 index.html
+    echo ⚠️  找不到備份檔案 main_index.html，請手動檢查 index.html
 )
 
 echo ✅ 維護模式已結束
