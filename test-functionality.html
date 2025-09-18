@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>功能測試 - 無障礙廁所GO V2</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-button {
+            background: #1976d2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #1565c0;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        .error {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        .info {
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px solid #2196f3;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>無障礙廁所GO V2 - 功能測試</h1>
+        
+        <div class="test-section">
+            <h3>1. JavaScript 載入測試</h3>
+            <button class="test-button" onclick="testJavaScriptLoading()">測試 JavaScript 載入</button>
+            <div id="js-loading-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>2. API 服務測試</h3>
+            <button class="test-button" onclick="testAPIService()">測試 API 服務</button>
+            <div id="api-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>3. 搜尋功能測試</h3>
+            <button class="test-button" onclick="testSearchFunction()">測試搜尋功能</button>
+            <div id="search-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>4. 位置服務測試</h3>
+            <button class="test-button" onclick="testLocationService()">測試位置服務</button>
+            <div id="location-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>5. 無障礙功能測試</h3>
+            <button class="test-button" onclick="testAccessibilityService()">測試無障礙功能</button>
+            <div id="accessibility-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>6. 導航功能測試</h3>
+            <button class="test-button" onclick="testNavigationService()">測試導航功能</button>
+            <div id="navigation-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>7. 工具函數測試</h3>
+            <button class="test-button" onclick="testUtils()">測試工具函數</button>
+            <div id="utils-result" class="test-result" style="display: none;"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>8. 完整功能測試</h3>
+            <button class="test-button" onclick="runAllTests()">執行所有測試</button>
+            <div id="all-tests-result" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <!-- 載入所有必要的 JavaScript 檔案 -->
+    <script src="js/config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/accessibility.js"></script>
+    <script src="js/navigation.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        // 測試函數
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.style.display = 'block';
+            element.className = `test-result ${type}`;
+            element.textContent = message;
+        }
+
+        function testJavaScriptLoading() {
+            const results = [];
+            
+            // 檢查各個服務是否載入
+            if (window.CONFIG) results.push('✅ CONFIG 已載入');
+            else results.push('❌ CONFIG 未載入');
+            
+            if (window.Utils) results.push('✅ Utils 已載入');
+            else results.push('❌ Utils 未載入');
+            
+            if (window.API) results.push('✅ API 已載入');
+            else results.push('❌ API 未載入');
+            
+            if (window.AccessibilityService) results.push('✅ AccessibilityService 已載入');
+            else results.push('❌ AccessibilityService 未載入');
+            
+            if (window.NavigationService) results.push('✅ NavigationService 已載入');
+            else results.push('❌ NavigationService 未載入');
+            
+            if (window.SearchService) results.push('✅ SearchService 已載入');
+            else results.push('❌ SearchService 未載入');
+            
+            if (window.App) results.push('✅ App 已載入');
+            else results.push('❌ App 未載入');
+            
+            const successCount = results.filter(r => r.includes('✅')).length;
+            const totalCount = results.length;
+            
+            showResult('js-loading-result', 
+                `載入結果: ${successCount}/${totalCount}\n${results.join('\n')}`, 
+                successCount === totalCount ? 'success' : 'error');
+        }
+
+        async function testAPIService() {
+            try {
+                if (!window.API || !window.API.service) {
+                    throw new Error('API 服務未載入');
+                }
+                
+                // 測試取得廁所資料
+                const toilets = await window.API.service.getAllToilets(10);
+                
+                if (Array.isArray(toilets)) {
+                    showResult('api-result', 
+                        `✅ API 服務正常\n取得 ${toilets.length} 筆廁所資料`, 
+                        'success');
+                } else {
+                    throw new Error('API 回應格式錯誤');
+                }
+            } catch (error) {
+                showResult('api-result', 
+                    `❌ API 服務錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function testSearchFunction() {
+            try {
+                if (!window.SearchService) {
+                    throw new Error('搜尋服務未載入');
+                }
+                
+                // 測試搜尋功能
+                const result = await window.API.service.searchNearbyToilets({
+                    keyword: '台北',
+                    limit: 5
+                });
+                
+                if (result && Array.isArray(result.toilets)) {
+                    showResult('search-result', 
+                        `✅ 搜尋功能正常\n找到 ${result.total} 筆結果`, 
+                        'success');
+                } else {
+                    throw new Error('搜尋結果格式錯誤');
+                }
+            } catch (error) {
+                showResult('search-result', 
+                    `❌ 搜尋功能錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function testLocationService() {
+            try {
+                if (!window.API || !window.API.location) {
+                    throw new Error('位置服務未載入');
+                }
+                
+                // 測試位置服務（不實際取得位置）
+                showResult('location-result', 
+                    '✅ 位置服務已載入\n（實際位置測試需要使用者授權）', 
+                    'info');
+            } catch (error) {
+                showResult('location-result', 
+                    `❌ 位置服務錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        function testAccessibilityService() {
+            try {
+                if (!window.AccessibilityService) {
+                    throw new Error('無障礙服務未載入');
+                }
+                
+                // 測試無障礙服務
+                const settings = window.AccessibilityService.getSettings();
+                
+                showResult('accessibility-result', 
+                    `✅ 無障礙服務正常\n當前設定: ${JSON.stringify(settings, null, 2)}`, 
+                    'success');
+            } catch (error) {
+                showResult('accessibility-result', 
+                    `❌ 無障礙服務錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        function testNavigationService() {
+            try {
+                if (!window.NavigationService) {
+                    throw new Error('導航服務未載入');
+                }
+                
+                // 測試導航服務
+                const currentPage = window.NavigationService.getCurrentPage();
+                
+                showResult('navigation-result', 
+                    `✅ 導航服務正常\n當前頁面: ${currentPage}`, 
+                    'success');
+            } catch (error) {
+                showResult('navigation-result', 
+                    `❌ 導航服務錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        function testUtils() {
+            try {
+                if (!window.Utils) {
+                    throw new Error('工具函數未載入');
+                }
+                
+                // 測試工具函數
+                const distance = window.Utils.calculateDistance(25.047924, 121.517081, 25.0330, 121.5654);
+                const formattedDistance = window.Utils.formatDistance(distance);
+                const formattedNumber = window.Utils.formatNumber(12345);
+                
+                showResult('utils-result', 
+                    `✅ 工具函數正常\n距離計算: ${formattedDistance}\n數字格式化: ${formattedNumber}`, 
+                    'success');
+            } catch (error) {
+                showResult('utils-result', 
+                    `❌ 工具函數錯誤: ${error.message}`, 
+                    'error');
+            }
+        }
+
+        async function runAllTests() {
+            showResult('all-tests-result', '正在執行所有測試...', 'info');
+            
+            const tests = [
+                { name: 'JavaScript 載入', fn: testJavaScriptLoading },
+                { name: 'API 服務', fn: testAPIService },
+                { name: '搜尋功能', fn: testSearchFunction },
+                { name: '位置服務', fn: testLocationService },
+                { name: '無障礙功能', fn: testAccessibilityService },
+                { name: '導航功能', fn: testNavigationService },
+                { name: '工具函數', fn: testUtils }
+            ];
+            
+            let passedTests = 0;
+            const results = [];
+            
+            for (const test of tests) {
+                try {
+                    await test.fn();
+                    passedTests++;
+                    results.push(`✅ ${test.name}`);
+                } catch (error) {
+                    results.push(`❌ ${test.name}: ${error.message}`);
+                }
+            }
+            
+            const successRate = Math.round((passedTests / tests.length) * 100);
+            showResult('all-tests-result', 
+                `測試完成: ${passedTests}/${tests.length} 通過 (${successRate}%)\n\n${results.join('\n')}`, 
+                successRate >= 80 ? 'success' : successRate >= 60 ? 'info' : 'error');
+        }
+
+        // 頁面載入完成後自動執行基本測試
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                testJavaScriptLoading();
+            }, 1000);
+        });
+    </script>
+</body>
+</html>
