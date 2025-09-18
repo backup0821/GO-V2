@@ -115,9 +115,17 @@
                 }
             } catch (error) {
                 console.error('API 測試錯誤:', error);
-                showResult('direct-api-result', 
-                    `❌ API 連線失敗: ${error.message}`, 
-                    'error');
+                
+                // 如果是 CORS 錯誤，顯示解決方案
+                if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                    showResult('direct-api-result', 
+                        `❌ CORS 錯誤: ${error.message}\n\n🔧 解決方案:\n1. 使用 CORS 代理服務\n2. 使用本地備份資料\n3. 部署到同域名的伺服器`, 
+                        'error');
+                } else {
+                    showResult('direct-api-result', 
+                        `❌ API 連線失敗: ${error.message}`, 
+                        'error');
+                }
             }
         }
 

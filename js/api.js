@@ -17,6 +17,14 @@ class APIService {
             this.apiKey = window.CONFIG.API.API_KEY;
             this.timeout = window.CONFIG.API.TIMEOUT;
         }
+        
+        // CORS 代理服務列表
+        this.corsProxies = [
+            'https://api.allorigins.win/raw?url=',
+            'https://cors-anywhere.herokuapp.com/',
+            'https://thingproxy.freeboard.io/fetch/'
+        ];
+        this.currentProxyIndex = 0;
     }
 
     /**
@@ -30,6 +38,7 @@ class APIService {
         const timeoutId = setTimeout(() => controller.abort(), this.timeout);
 
         try {
+            // 嘗試直接請求
             const response = await fetch(url, {
                 ...options,
                 signal: controller.signal,
@@ -51,10 +60,61 @@ class APIService {
             clearTimeout(timeoutId);
             
             if (error.name === 'AbortError') {
-                throw new Error(window.CONFIG.MESSAGES.API_ERROR);
+                throw new Error('請求超時');
+            }
+            
+            // 如果是 CORS 錯誤，嘗試使用代理
+            if (error.message.includes('CORS') || error.message.includes('Failed to fetch')) {
+                console.log('檢測到 CORS 錯誤，嘗試使用代理服務...');
+                return await this.requestWithProxy(url, options);
             }
             
             throw error;
+        }
+    }
+
+    /**
+     * 使用 CORS 代理發送請求
+     * @param {string} url - 原始 URL
+     * @param {Object} options - 請求選項
+     * @returns {Promise<Object>} 回應資料
+     */
+    async requestWithProxy(url, options = {}) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), this.timeout);
+
+        for (let i = 0; i < this.corsProxies.length; i++) {
+            try {
+                const proxyUrl = this.corsProxies[this.currentProxyIndex] + encodeURIComponent(url);
+                console.log(`嘗試使用代理 ${this.currentProxyIndex + 1}:`, proxyUrl);
+                
+                const response = await fetch(proxyUrl, {
+                    ...options,
+                    signal: controller.signal,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`代理請求失敗: HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('代理請求成功');
+                return data;
+            } catch (error) {
+                console.log(`代理 ${this.currentProxyIndex + 1} 失敗:`, error.message);
+                this.currentProxyIndex = (this.currentProxyIndex + 1) % this.corsProxies.length;
+                
+                if (i === this.corsProxies.length - 1) {
+                    clearTimeout(timeoutId);
+                    throw new Error('所有 CORS 代理都失敗了');
+                }
+            }
         }
     }
 
@@ -110,6 +170,29 @@ class APIService {
                     console.log('使用本地快取資料:', localData.length, '筆');
                     return localData;
                 }
+            }
+            
+            // 嘗試使用本地備份資料
+            try {
+                console.log('嘗試使用本地備份資料...');
+                const backupResponse = await fetch('data/toilets-backup.json');
+                if (backupResponse.ok) {
+                    const backupData = await backupResponse.json();
+                    if (backupData && backupData.records) {
+                        const backupToilets = backupData.records.map(record => this.transformToiletData(record));
+                        console.log('使用本地備份資料:', backupToilets.length, '筆');
+                        
+                        // 儲存備份資料到快取
+                        this.cache.set(cacheKey, {
+                            data: backupToilets,
+                            timestamp: Date.now()
+                        });
+                        
+                        return backupToilets;
+                    }
+                }
+            } catch (backupError) {
+                console.error('本地備份資料載入失敗:', backupError);
             }
             
             // 返回空陣列而不是拋出錯誤
