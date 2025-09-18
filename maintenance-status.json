@@ -1,11 +1,7 @@
 {
-    "maintenance": true,
-    "message": "系統維護中 - 系統測是",
-    "startTime": "2025-09-18 05:31:24 UTC",
+    "maintenance": false,
+    "message": "系統正常運行",
+    "startTime": null,
     "endTime": null,
-    "reason": "系統測是",
-    "duration": "5 小時",
-    "contact": "makerbackup0821@gmail.com",
-    "triggeredBy": "GitHub Action",
-    "triggeredAt": "2025-09-18 05:31:24 UTC"
+    "reason": null
 }
